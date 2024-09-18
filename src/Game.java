@@ -5,6 +5,7 @@ abstract class Game implements Runnable {
 	protected int turn, turnMax;
 	protected boolean isRunning;
 	protected long sleepDelay;
+	protected ViewSimpleGame view;
 
 	abstract protected void initializeGame();
 	public void init() {
@@ -15,10 +16,11 @@ abstract class Game implements Runnable {
 		initializeGame();
 	}
 
-	public Game(int turnMax, long sleepDelay) {
+	public Game(int turnMax, long sleepDelay, ViewSimpleGame view) {
 		init();
 		this.turnMax = turnMax;
 		this.sleepDelay = sleepDelay;
+		this.view = view;
 	}
 
 	abstract protected void takeTurn();
@@ -28,6 +30,7 @@ abstract class Game implements Runnable {
 		if (gameContinue() && turn < turnMax) {
 			++turn;
 			takeTurn();
+			view.updateTurnCounter(turn);
 		} else {
 			isRunning = false;
 			gameOver();
