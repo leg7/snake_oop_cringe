@@ -6,9 +6,9 @@ class SimpleGame extends Game {
 
 	final protected void initializeGame() { }
 
-	public SimpleGame(int turnMax) {
-		super(turnMax);
-		log("turnMax = " + turnMax);
+	public SimpleGame(int turnMax, long sleepDelay) {
+		super(turnMax, sleepDelay);
+		log("turnMax = " + turnMax + ", sleepDelay = " + sleepDelay);
 	}
 
 	@Override final public void init() {
