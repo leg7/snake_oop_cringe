@@ -8,9 +8,7 @@ class ViewSimpleGame implements PropertyChangeListener {
 	private Dimension windowSize;
 	private GraphicsEnvironment ge;
 
-	public ViewSimpleGame(Game game) {
-		game.addPropertyChangeListener(this);
-
+	public ViewSimpleGame() {
 		jFrame = new JFrame();
 		jFrame.setTitle("Game");
 		jFrame.setSize(new Dimension(700, 700));

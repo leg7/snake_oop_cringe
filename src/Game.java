@@ -12,9 +12,7 @@ abstract class Game implements Runnable {
 	abstract protected void initializeGame();
 	public void init() {
 		turn = 0;
-		turnMax = 0;
 		isRunning = true;
-		sleepDelay = 0;
 		initializeGame();
 	}
 
@@ -65,4 +63,8 @@ abstract class Game implements Runnable {
 	}
 
 	public int getTurn() { return turn; }
+
+	public void setSleepDelay(long speed) {
+		sleepDelay = speed;
+	}
 }
