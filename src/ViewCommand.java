@@ -1,14 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
 import java.beans.*;
+import java.awt.event.*;
 
 class ViewCommand implements PropertyChangeListener {
 	private JFrame jFrame;
 	private Dimension windowSize;
 	private GraphicsEnvironment ge;
 	private JLabel turnLabel;
+	private AbstractController controller;
 
-	public ViewCommand(Game game) {
+	public ViewCommand(Game game, AbstractController controller) {
+		this.controller = controller;
 		game.addPropertyChangeListener(this);
 
 		jFrame = new JFrame();
@@ -36,6 +39,26 @@ class ViewCommand implements PropertyChangeListener {
 		buttonsPanel.add(buttonPlay);
 		buttonsPanel.add(buttonStep);
 		mainPanel.add(buttonsPanel);
+		buttonRestart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				controller.restart();
+			}
+		});
+		buttonPause.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				controller.pause();
+			}
+		});
+		buttonPlay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				controller.play();
+			}
+		});
+		buttonStep.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				controller.step();
+			}
+		});
 
 		JPanel sliderAndInfoPanel = new JPanel();
 		sliderAndInfoPanel.setLayout(new GridLayout(1, 2));
