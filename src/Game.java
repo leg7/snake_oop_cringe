@@ -1,4 +1,5 @@
 import java.lang.Runnable;
+import java.beans.*;
 
 abstract class Game implements Runnable {
 	protected Thread thread;
@@ -6,6 +7,7 @@ abstract class Game implements Runnable {
 	protected boolean isRunning;
 	protected long sleepDelay;
 	protected ViewSimpleGame view;
+	protected final PropertyChangeSupport pcs;
 
 	abstract protected void initializeGame();
 	public void init() {
@@ -21,6 +23,7 @@ abstract class Game implements Runnable {
 		this.turnMax = turnMax;
 		this.sleepDelay = sleepDelay;
 		this.view = view;
+		pcs = new PropertyChangeSupport(this);
 	}
 
 	abstract protected void takeTurn();
@@ -28,9 +31,8 @@ abstract class Game implements Runnable {
 	abstract protected void gameOver();
 	public void step() {
 		if (gameContinue() && turn < turnMax) {
-			++turn;
+			pcs.firePropertyChange("turn", turn, ++turn);
 			takeTurn();
-			view.updateTurnCounter(turn);
 		} else {
 			isRunning = false;
 			gameOver();
@@ -53,4 +55,14 @@ abstract class Game implements Runnable {
 		thread = new Thread(this);
 		thread.start();
 	}
+
+	public void addPropertyChangeListener(PropertyChangeListener pl) {
+		this.pcs.addPropertyChangeListener(pl);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener pl) {
+		this.pcs.removePropertyChangeListener(pl);
+	}
+
+	public int getTurn() { return turn; }
 }

@@ -1,12 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
+import java.beans.*;
 
-class ViewCommand {
+class ViewCommand implements PropertyChangeListener {
 	private JFrame jFrame;
 	private Dimension windowSize;
 	private GraphicsEnvironment ge;
+	private JLabel turnLabel;
 
-	public ViewCommand() {
+	public ViewCommand(Game game) {
+		game.addPropertyChangeListener(this);
+
 		jFrame = new JFrame();
 		jFrame.setTitle("Commands");
 		jFrame.setSize(new Dimension(700, 700));
@@ -40,9 +44,13 @@ class ViewCommand {
 		slider.setPaintLabels(true);
 		sliderAndInfoPanel.add(slider);
 		mainPanel.add(sliderAndInfoPanel);
-		JLabel jLabel = new JLabel("Turn: ", JLabel.CENTER);
-		sliderAndInfoPanel.add(jLabel);
+		turnLabel = new JLabel("Turn: 0", JLabel.CENTER);
+		sliderAndInfoPanel.add(turnLabel);
 
 		jFrame.setVisible(true);
+	}
+
+	public void propertyChange(PropertyChangeEvent e) {
+		turnLabel.setText("Turn: " + e.getNewValue());
 	}
 }

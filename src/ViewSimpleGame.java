@@ -1,13 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
+import java.beans.*;
 
-class ViewSimpleGame {
+class ViewSimpleGame implements PropertyChangeListener {
 	private JFrame jFrame;
 	private JLabel jLabel;
 	private Dimension windowSize;
 	private GraphicsEnvironment ge;
 
-	public ViewSimpleGame() {
+	public ViewSimpleGame(Game game) {
+		game.addPropertyChangeListener(this);
+
 		jFrame = new JFrame();
 		jFrame.setTitle("Game");
 		jFrame.setSize(new Dimension(700, 700));
@@ -24,7 +27,7 @@ class ViewSimpleGame {
 		jFrame.setVisible(true);
 	}
 
-	public void updateTurnCounter(int turn) {
-		jLabel.setText("Turn :" + turn);
+	public void propertyChange(PropertyChangeEvent e) {
+		jLabel.setText("Turn :" + e.getNewValue());
 	}
 }
