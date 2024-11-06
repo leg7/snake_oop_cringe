@@ -1,6 +1,3 @@
-import java.beans.*;
-import javax.swing.*;
-
 public abstract class AbstractController {
 	protected Game g;
 

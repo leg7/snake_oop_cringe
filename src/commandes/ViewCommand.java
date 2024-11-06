@@ -8,10 +8,16 @@ class ViewCommand implements PropertyChangeListener {
 	private Dimension windowSize;
 	private GraphicsEnvironment ge;
 	private JLabel turnLabel;
+
 	private AbstractController controller;
+	public JButton buttonRestart;
+	public JButton buttonPause;
+	public JButton buttonPlay;
+	public JButton buttonStep;
+
+	private CommandState commandState;
 
 	public ViewCommand(Game game, AbstractController controller) {
-		this.controller = controller;
 		game.addPropertyChangeListener(this);
 
 		jFrame = new JFrame();
@@ -30,33 +36,40 @@ class ViewCommand implements PropertyChangeListener {
 
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new GridLayout(1, 4));
-		JButton buttonRestart = new JButton(new ImageIcon("../icons/restart.png"));
-		JButton buttonPause   = new JButton(new ImageIcon("../icons/pause.png"));
-		JButton buttonPlay    = new JButton(new ImageIcon("../icons/play.png"));
-		JButton buttonStep    = new JButton(new ImageIcon("../icons/step.png"));
+		buttonRestart = new JButton(new ImageIcon("../icons/restart.png"));
+		buttonPause   = new JButton(new ImageIcon("../icons/pause.png"));
+		buttonPlay    = new JButton(new ImageIcon("../icons/play.png"));
+		buttonStep    = new JButton(new ImageIcon("../icons/step.png"));
 		buttonsPanel.add(buttonRestart);
 		buttonsPanel.add(buttonPause);
 		buttonsPanel.add(buttonPlay);
 		buttonsPanel.add(buttonStep);
 		mainPanel.add(buttonsPanel);
+
+		this.controller = controller;
+		commandState = new CommandStateInit(this);
 		buttonRestart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				controller.restart();
+				commandState.restart();
 			}
 		});
 		buttonPause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				controller.pause();
+				commandState.pause();
 			}
 		});
 		buttonPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				controller.play();
+				commandState.play();
 			}
 		});
 		buttonStep.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				controller.step();
+				commandState.step();
 			}
 		});
 
@@ -75,5 +88,9 @@ class ViewCommand implements PropertyChangeListener {
 
 	public void propertyChange(PropertyChangeEvent e) {
 		turnLabel.setText("Turn: " + e.getNewValue());
+	}
+
+	public void setCommandState(CommandState n) {
+		commandState = n;
 	}
 }

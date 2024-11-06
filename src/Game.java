@@ -11,17 +11,18 @@ abstract class Game implements Runnable {
 
 	abstract protected void initializeGame();
 	public void init() {
+		pcs.firePropertyChange("turn", turn, 0);
 		turn = 0;
-		isRunning = true;
+		isRunning = false;
 		initializeGame();
 	}
 
 	public Game(int turnMax, long sleepDelay, ViewSimpleGame view) {
-		init();
 		this.turnMax = turnMax;
 		this.sleepDelay = sleepDelay;
 		this.view = view;
 		pcs = new PropertyChangeSupport(this);
+		init();
 	}
 
 	abstract protected void takeTurn();
