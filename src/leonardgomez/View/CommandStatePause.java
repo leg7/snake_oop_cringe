@@ -1,3 +1,5 @@
+package leonardgomez.View;
+
 public class CommandStatePause extends CommandState {
 	CommandStatePause(ViewCommand v) {
 		super(v);

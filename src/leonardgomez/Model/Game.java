@@ -1,7 +1,11 @@
+package leonardgomez.Model;
+
+import leonardgomez.View.*;
+
 import java.lang.Runnable;
 import java.beans.*;
 
-abstract class Game implements Runnable {
+public abstract class Game implements Runnable {
 	protected Thread thread;
 	protected int turn, turnMax;
 	protected boolean isRunning;

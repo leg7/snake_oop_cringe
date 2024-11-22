@@ -1,8 +1,10 @@
+package leonardgomez.View;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.*;
 
-class ViewSimpleGame implements PropertyChangeListener {
+public class ViewSimpleGame implements PropertyChangeListener {
 	private JFrame jFrame;
 	private JLabel jLabel;
 	private Dimension windowSize;

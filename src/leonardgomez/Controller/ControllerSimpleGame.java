@@ -1,8 +1,13 @@
+package leonardgomez.Controller;
+
+import leonardgomez.View.*;
+import leonardgomez.Model.*;
+
 public class ControllerSimpleGame extends AbstractController {
 	ViewSimpleGame viewSimpleGame;
 	ViewCommand viewCommand;
 
-	ControllerSimpleGame() {
+	public ControllerSimpleGame() {
 		viewSimpleGame = new ViewSimpleGame();
 		g = new SimpleGame(10, 500, viewSimpleGame);
 		g.addPropertyChangeListener(viewSimpleGame);

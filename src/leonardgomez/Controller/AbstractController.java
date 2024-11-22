@@ -1,3 +1,7 @@
+package leonardgomez.Controller;
+
+import leonardgomez.Model.Game;
+
 public abstract class AbstractController {
 	protected Game g;
 

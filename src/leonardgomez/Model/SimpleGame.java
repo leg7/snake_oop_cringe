@@ -1,4 +1,7 @@
-class SimpleGame extends Game {
+package leonardgomez.Model;
+import leonardgomez.View.*;
+
+public class SimpleGame extends Game {
 	private void log(String message) {
 		String methodName = new Throwable().getStackTrace()[1].getMethodName();
 		System.out.println(methodName + "(): " + message);

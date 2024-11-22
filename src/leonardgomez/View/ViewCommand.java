@@ -1,9 +1,16 @@
+package leonardgomez.View;
+
+import leonardgomez.Controller.*;
+import leonardgomez.Model.*;
+
+
+import java.io.File;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.*;
 import java.awt.event.*;
 
-class ViewCommand implements PropertyChangeListener {
+public class ViewCommand implements PropertyChangeListener {
 	private JFrame jFrame;
 	private Dimension windowSize;
 	private GraphicsEnvironment ge;
@@ -36,10 +43,11 @@ class ViewCommand implements PropertyChangeListener {
 
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new GridLayout(1, 4));
-		buttonRestart = new JButton(new ImageIcon("../icons/restart.png"));
-		buttonPause   = new JButton(new ImageIcon("../icons/pause.png"));
-		buttonPlay    = new JButton(new ImageIcon("../icons/play.png"));
-		buttonStep    = new JButton(new ImageIcon("../icons/step.png"));
+		buttonRestart = new JButton(new ImageIcon(getClass().getResource("/icons/restart.png")));
+		buttonPause   = new JButton(new ImageIcon(getClass().getResource("/icons/pause.png")));
+		buttonPlay    = new JButton(new ImageIcon(getClass().getResource("/icons/play.png")));
+		buttonStep    = new JButton(new ImageIcon(getClass().getResource("/icons/step.png")));
+
 		buttonsPanel.add(buttonRestart);
 		buttonsPanel.add(buttonPause);
 		buttonsPanel.add(buttonPlay);

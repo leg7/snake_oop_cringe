@@ -1,4 +1,4 @@
 #!/bin/sh
 
-cd build || ./build.sh
+cd bin || ./build.sh
 java "$1"

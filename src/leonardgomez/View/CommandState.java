@@ -1,3 +1,5 @@
+package leonardgomez.View;
+
 public abstract class CommandState {
 	protected ViewCommand view;
 

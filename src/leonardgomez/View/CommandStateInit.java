@@ -1,3 +1,5 @@
+package leonardgomez.View;
+
 public class CommandStateInit extends CommandState {
 	CommandStateInit(ViewCommand view) {
 		super(view);
