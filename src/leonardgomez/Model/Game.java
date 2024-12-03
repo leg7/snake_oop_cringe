@@ -1,7 +1,5 @@
 package leonardgomez.Model;
 
-import leonardgomez.View.*;
-
 import java.lang.Runnable;
 import java.beans.*;
 
@@ -10,7 +8,6 @@ public abstract class Game implements Runnable {
 	protected int turn, turnMax;
 	protected boolean isRunning;
 	protected long sleepDelay;
-	protected ViewSimpleGame view;
 	protected final PropertyChangeSupport pcs;
 
 	abstract protected void initializeGame();
@@ -21,10 +18,9 @@ public abstract class Game implements Runnable {
 		initializeGame();
 	}
 
-	public Game(int turnMax, long sleepDelay, ViewSimpleGame view) {
+	public Game(int turnMax, long sleepDelay) {
 		this.turnMax = turnMax;
 		this.sleepDelay = sleepDelay;
-		this.view = view;
 		pcs = new PropertyChangeSupport(this);
 		init();
 	}

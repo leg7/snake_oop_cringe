@@ -3,7 +3,6 @@ package leonardgomez.View;
 import leonardgomez.Controller.*;
 import leonardgomez.Model.*;
 
-
 import java.io.File;
 import javax.swing.*;
 import java.awt.*;

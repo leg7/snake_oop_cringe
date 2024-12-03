@@ -9,8 +9,10 @@ public class ControllerSimpleGame extends AbstractController {
 
 	public ControllerSimpleGame() {
 		viewSimpleGame = new ViewSimpleGame();
-		g = new SimpleGame(10, 500, viewSimpleGame);
+
+		g = new SimpleGame(10, 500);
 		g.addPropertyChangeListener(viewSimpleGame);
+
 		viewCommand = new ViewCommand(g, this);
 	}
 }

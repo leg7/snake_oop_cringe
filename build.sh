@@ -6,4 +6,4 @@ mkdir -p "$BUILD_DIR"
 
 SRC="$(find ./src -type f -name '*.java' | tr '\n' ' ')"
 javac -d "$BUILD_DIR" $SRC
-cp -r icons "$BUILD_DIR"
+cp -r icons images layouts "$BUILD_DIR"

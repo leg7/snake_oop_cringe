@@ -1,5 +1,4 @@
 package leonardgomez.Model;
-import leonardgomez.View.*;
 
 public class SimpleGame extends Game {
 	private void log(String message) {
@@ -9,8 +8,8 @@ public class SimpleGame extends Game {
 
 	final protected void initializeGame() { }
 
-	public SimpleGame(int turnMax, long sleepDelay, ViewSimpleGame view) {
-		super(turnMax, sleepDelay, view);
+	public SimpleGame(int turnMax, long sleepDelay) {
+		super(turnMax, sleepDelay);
 		log("turnMax = " + turnMax + ", sleepDelay = " + sleepDelay);
 	}
 
