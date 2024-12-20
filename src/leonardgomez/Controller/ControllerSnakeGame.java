@@ -1,8 +1,8 @@
 package leonardgomez.Controller;
 
 import leonardgomez.Controller.AbstractController;
-import leonardgomez.Model.InputMap;
-import leonardgomez.Model.SnakeGame;
+import leonardgomez.Model.*;
+import leonardgomez.Model.Agent.*;
 import leonardgomez.View.*;
 import java.util.ArrayList;
 import utils.*;
@@ -21,7 +21,12 @@ public class ControllerSnakeGame extends AbstractController {
 		);
 		viewSnakeGame = new ViewSnakeGame(p);
 
-		this.g = new SnakeGame(1000, 50, im);
+		var turns = 1000;
+		var turnTime = 150;
+		// var sg = new SnakeGameAI(turns, turnTime, im);
+		var sg = new SnakeGamePVP(turns, turnTime, im, viewSnakeGame);
+
+		this.g = sg;
 		g.init();
 		this.g.addPropertyChangeListener(viewSnakeGame);
 

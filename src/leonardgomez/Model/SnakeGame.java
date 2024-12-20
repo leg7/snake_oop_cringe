@@ -12,17 +12,17 @@ import java.util.HashSet;
 import java.util.stream.*;
 import java.beans.*;
 
-public class SnakeGame extends Game {
-	private InputMap inputMap;
-	private ArrayList<Agent> agents;
-	private ArrayList<Item> items;
+public abstract class SnakeGame extends Game {
+	protected InputMap inputMap;
+	protected ArrayList<Agent> agents;
+	protected ArrayList<Item> items;
 
-	private final static Random random = new Random();
-	private final static int pItemSpawn = 100; // Je regle la proba a 100% pareque c'est plus interesant
-	private final static int pItemRange = 101;
+	protected final static Random random = new Random();
+	protected final static int pItemSpawn = 100; // Je regle la proba a 100% pareque c'est plus interesant
+	protected final static int pItemRange = 101;
 
-	private final static int snakeSickRounds = 20;
-	private final static int snakeInvincibleRounds = 20;
+	protected final static int snakeSickRounds = 20;
+	protected final static int snakeInvincibleRounds = 20;
 
 
 	public SnakeGame(int turnMax, long sleepDelay, InputMap inputMap) {
@@ -45,17 +45,9 @@ public class SnakeGame extends Game {
 		pcs.firePropertyChange("features", null, features);
 	}
 
-	final protected void initializeGame() {
-		agents = inputMap.getStart_snakes().stream()
-			.map(fs -> AgentFabric.snake(
-					new ArrayList<Position>(fs.getPositions()),
-					fs.getLastAction(),
-					fs.isInvincible() ? snakeInvincibleRounds : 0,
-					fs.isSick() ? snakeSickRounds : 0,
-					fs.getColorSnake(),
-					this)
-			)
-			.collect(Collectors.toCollection(ArrayList::new));
+	@Override
+	protected void initializeGame() {
+		// initialize the snakes of the input map in your subclass
 
 		items = inputMap.getStart_items().stream()
 			.map(fi -> new Item(new Position(fi.getX(), fi.getY()), fi.getItemType()))
@@ -87,19 +79,19 @@ public class SnakeGame extends Game {
 				items.removeIf(i -> {
 					if (i.position().equals(head)) {
 						switch (i.type()) {
-							case ItemType.APPLE:
-								a.grow();
-								return true;
-							case ItemType.BOX:
-								return true;
-							case ItemType.SICK_BALL:
-								a.makeSick(snakeSickRounds);
-								return true;
-							case ItemType.INVINCIBILITY_BALL:
-								a.makeInvincible(snakeInvincibleRounds);
-								return true;
-							default:
-								return false;
+						case ItemType.APPLE:
+							a.grow();
+							return true;
+						case ItemType.BOX:
+							return true;
+						case ItemType.SICK_BALL:
+							a.makeSick(snakeSickRounds);
+							return true;
+						case ItemType.INVINCIBILITY_BALL:
+							a.makeInvincible(snakeInvincibleRounds);
+							return true;
+						default:
+							return false;
 						}
 					}
 					return false;
@@ -112,6 +104,7 @@ public class SnakeGame extends Game {
 					if (itemSpawns) {
 						var types = ItemType.values();
 						var typeIndex = random.nextInt(types.length);
+						System.out.println(typeIndex);
 						var itemType = types[typeIndex];
 
 						var itemPosX = random.nextInt(inputMap().getSizeX());
@@ -153,8 +146,8 @@ public class SnakeGame extends Game {
 				var bHead = bPos.getFirst();
 				var bTail = bPos.subList(1, bPos.size());
 
-// Contradiction dans les regles du jeux alors j'enleve ce cas qui pose probleme
-/*
+/* Contradiction dans les regles du jeux alors j'enleve ce cas qui pose probleme
+ *
  * Si la tête d’un agent snake se retrouve sur la position d’un autre snake (tête ou corps) et
  * que la taille de son corps est supérieure ou égale à celle de l’autre snake, il le mange et le fait
  * disparaître.
@@ -193,7 +186,6 @@ public class SnakeGame extends Game {
 		return agents.size() != 0;
 	}
 
-	public InputMap inputMap() {
-		return inputMap;
-	}
+	public InputMap inputMap() { return inputMap; }
+	public ArrayList<Agent> agents() { return agents; }
 }

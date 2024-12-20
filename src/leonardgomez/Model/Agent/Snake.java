@@ -6,7 +6,7 @@ import utils.*;
 
 import java.util.ArrayList;
 
-public class Snake implements Agent {
+public abstract class Snake implements Agent {
 	private ArrayList<Position> pos;
 	private AgentAction action = AgentAction.MOVE_UP;
 	private SnakeGame game;
@@ -16,7 +16,6 @@ public class Snake implements Agent {
 
 	private ColorSnake color;
 
-	private ActionStrategy strategy = new ActionStrategySurvivalNaive();
 	private boolean grow = false;
 
 	public Snake(
@@ -68,7 +67,6 @@ public class Snake implements Agent {
 
 	@Override
 	public void move() {
-		strategy.setNewAction(this);
 		pos.addFirst(nextPosition(this.action));
 
 		if (!grow) {
