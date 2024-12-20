@@ -11,6 +11,9 @@ public interface Agent {
 	ColorSnake color();
 
 	boolean setAction(AgentAction a);
+	public void grow();
+	public void makeSick(int roundsToBeSick);
+	public void makeInvincible(int roundsToBeInvincible);
 
 	boolean legalMove(AgentAction newAction);
 

@@ -6,6 +6,7 @@ import leonardgomez.Model.Item.*;
 
 import utils.*;
 
+import java.util.Random;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.stream.*;
@@ -15,6 +16,14 @@ public class SnakeGame extends Game {
 	private InputMap inputMap;
 	private ArrayList<Agent> agents;
 	private ArrayList<Item> items;
+
+	private final static Random random = new Random();
+	private final static int pItemSpawn = 100; // Je regle la proba a 100% pareque c'est plus interesant
+	private final static int pItemRange = 101;
+
+	private final static int snakeSickRounds = 20;
+	private final static int snakeInvincibleRounds = 20;
+
 
 	public SnakeGame(int turnMax, long sleepDelay, InputMap inputMap) {
 		super(turnMax, sleepDelay);
@@ -41,8 +50,8 @@ public class SnakeGame extends Game {
 			.map(fs -> AgentFabric.snake(
 					new ArrayList<Position>(fs.getPositions()),
 					fs.getLastAction(),
-					fs.isInvincible(),
-					fs.isSick(),
+					fs.isInvincible() ? snakeInvincibleRounds : 0,
+					fs.isSick() ? snakeSickRounds : 0,
 					fs.getColorSnake(),
 					this)
 			)
@@ -64,27 +73,56 @@ public class SnakeGame extends Game {
 
 	@Override
 	final protected void takeTurn() {
-		agents.forEach(a -> a.move());
-		updateView();
-	}
-
-	@Override
-	final protected void gameOver() {
-		System.out.println("Game Over");
-		return;
-	}
-
-	@Override
-	final protected boolean gameContinue() {
-		if (agents.size() == 0) {
-			return false;
-		}
-
 		var agentsToRemove = new HashSet<Agent>();
 
 		for (var a : agents) {
+			a.move();
 			var pos = a.getPositions();
 			var head = pos.getFirst();
+
+			// Check if the agent's head ran into an item
+			if (!a.sick()) {
+				var originalSize = items.size(); // Used later to check if the agent got the item
+
+				items.removeIf(i -> {
+					if (i.position().equals(head)) {
+						switch (i.type()) {
+							case ItemType.APPLE:
+								a.grow();
+								return true;
+							case ItemType.BOX:
+								return true;
+							case ItemType.SICK_BALL:
+								a.makeSick(snakeSickRounds);
+								return true;
+							case ItemType.INVINCIBILITY_BALL:
+								a.makeInvincible(snakeInvincibleRounds);
+								return true;
+							default:
+								return false;
+						}
+					}
+					return false;
+				});
+
+				boolean itemAcquired = originalSize != items.size();
+				if (itemAcquired) {
+					var roll = random.nextInt(pItemRange);
+					boolean itemSpawns = roll < pItemSpawn;
+					if (itemSpawns) {
+						var types = ItemType.values();
+						var typeIndex = random.nextInt(types.length);
+						var itemType = types[typeIndex];
+
+						var itemPosX = random.nextInt(inputMap().getSizeX());
+						var itemPosY = random.nextInt(inputMap().getSizeY());
+						var itemPos = new Position(itemPosX, itemPosY);
+
+						var item = new Item(itemPos, itemType);
+						items.add(item);
+					}
+				}
+			}
 
 			// Check if an agent ran into himself
 			var uniquePos = new HashSet(pos);
@@ -95,15 +133,11 @@ public class SnakeGame extends Game {
 			}
 
 			// Check if an agent ran into a wall
-			//
-			// We only need to check the head because all the other body parts
-			// follow the head, and therefore were previously a head, and were checked
 			var walls = inputMap().get_walls();
 			if (walls[head.x()][head.y()]) {
 				agentsToRemove.add(a);
 				continue;
 			}
-
 		}
 
 		// Check if an agent ran into another agent
@@ -145,8 +179,18 @@ public class SnakeGame extends Game {
 
 		agentsToRemove.forEach(a -> agents.remove(a));
 
+		updateView();
+	}
 
-		return true;
+	@Override
+	final protected void gameOver() {
+		System.out.println("Game Over");
+		return;
+	}
+
+	@Override
+	final protected boolean gameContinue() {
+		return agents.size() != 0;
 	}
 
 	public InputMap inputMap() {

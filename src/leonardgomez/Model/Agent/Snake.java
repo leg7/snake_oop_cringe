@@ -9,26 +9,29 @@ import java.util.ArrayList;
 public class Snake implements Agent {
 	private ArrayList<Position> pos;
 	private AgentAction action = AgentAction.MOVE_UP;
-	private boolean invincible;
-	private boolean sick;
+	private SnakeGame game;
+
+	private int roundsToBeInvincible = 0;
+	private int roundsToBeSick = 0;
+
 	private ColorSnake color;
 
-	private SnakeGame game;
 	private ActionStrategy strategy = new ActionStrategySurvivalNaive();
 	private boolean grow = false;
 
 	public Snake(
 		ArrayList<Position> pos,
 		AgentAction action,
-		boolean invincible,
-		boolean sick,
+		int roundsInvincible,
+		int roundsSick,
 		ColorSnake color,
 		SnakeGame g)
 	{
+		super();
 		this.pos = new ArrayList<Position>(pos);
 		this.action = action;
-		this.invincible = invincible;
-		this.sick = sick;
+		roundsToBeSick = roundsSick;
+		roundsToBeInvincible = roundsInvincible;
 		this.color = color;
 		game = g;
 	}
@@ -68,13 +71,26 @@ public class Snake implements Agent {
 		strategy.setNewAction(this);
 		pos.addFirst(nextPosition(this.action));
 
-		grow();
-
 		if (!grow) {
 			pos.removeLast();
 		} else {
 			grow = false;
 		}
+
+		if (roundsToBeSick > 0) {
+			roundsToBeSick--;
+		}
+		if (roundsToBeInvincible > 0) {
+			roundsToBeInvincible--;
+		}
+	}
+
+	public void makeSick(int roundsToBeSick) {
+		this.roundsToBeSick = roundsToBeSick;
+	}
+
+	public void makeInvincible(int roundsToBeInvincible) {
+		this.roundsToBeInvincible = roundsToBeInvincible;
 	}
 
 	public void grow() {
@@ -103,7 +119,7 @@ public class Snake implements Agent {
 	@Override
 	public ArrayList<Position> getPositions() { return pos; }
 	public AgentAction action() { return action; }
-	public boolean invincible() { return invincible; }
-	public boolean sick() { return sick; }
+	public boolean invincible() { return roundsToBeInvincible > 0; }
+	public boolean sick() { return roundsToBeSick > 0; }
 	public ColorSnake color() { return color; }
 }

@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import utils.*;
 
 public class AgentFabric {
-	private AgentFabric() {}
+	private AgentFabric() { super(); }
 
 	public static Agent snake(
 		ArrayList<Position> pos,
 		AgentAction action,
-		boolean invincible,
-		boolean sick,
+		int roundsToBeInvincible,
+		int roundsToBeSick,
 		ColorSnake color,
 		SnakeGame g)
 	{
-		return new Snake(pos, action, invincible, sick, color, g);
+		return new Snake(pos, action, roundsToBeInvincible, roundsToBeSick, color, g);
 	}
 }

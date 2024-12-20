@@ -21,7 +21,7 @@ public class ControllerSnakeGame extends AbstractController {
 		);
 		viewSnakeGame = new ViewSnakeGame(p);
 
-		this.g = new SnakeGame(100, 100, im);
+		this.g = new SnakeGame(1000, 50, im);
 		g.init();
 		this.g.addPropertyChangeListener(viewSnakeGame);
 
