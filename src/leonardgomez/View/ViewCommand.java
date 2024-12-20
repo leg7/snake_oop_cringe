@@ -5,8 +5,8 @@ import leonardgomez.Model.*;
 
 import java.io.File;
 import javax.swing.*;
-import java.awt.*;
 import java.beans.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class ViewCommand implements PropertyChangeListener {
@@ -94,7 +94,11 @@ public class ViewCommand implements PropertyChangeListener {
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {
-		turnLabel.setText("Turn: " + e.getNewValue());
+		switch (e.getPropertyName()) {
+			case "turn":
+				turnLabel.setText("Turn: " + e.getNewValue());
+			break;
+		}
 	}
 
 	public void setCommandState(CommandState n) {

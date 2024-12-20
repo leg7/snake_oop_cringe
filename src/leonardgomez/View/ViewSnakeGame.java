@@ -7,6 +7,8 @@ import java.beans.*;
 import java.awt.*;
 import javax.swing.*;
 
+import utils.*;
+
 public class ViewSnakeGame implements PropertyChangeListener {
 	private PanelSnakeGame p;
 	private JFrame frame;
@@ -21,6 +23,22 @@ public class ViewSnakeGame implements PropertyChangeListener {
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {
-		 p.repaint();
+		switch (e.getPropertyName()) {
+			case "features":
+				var obj = e.getNewValue();
+				if (obj instanceof Features(var fss, var fis)) {
+					p.updateInfoGame(fss, fis);
+				} else {
+					System.exit(69);
+				}
+			break;
+
+			case "turn":
+				p.repaint();
+			break;
+
+			default:
+				System.exit(69);
+		}
 	}
 }

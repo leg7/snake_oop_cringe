@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import java.util.ArrayList;
 
@@ -14,6 +17,8 @@ import utils.FeaturesItem;
 import utils.FeaturesSnake;
 import utils.ItemType;
 import utils.Position;
+
+import java.net.URL;
 
 public class InputMap implements Serializable {
 
@@ -41,117 +46,91 @@ public class InputMap implements Serializable {
 		this.filename = filename;
 
 		try{
+			URL resourceUrl = getClass().getResource(filename);
 
-		InputStream flux =new FileInputStream(filename);
-		InputStreamReader lecture =new InputStreamReader(flux);
-		buffer = new BufferedReader(lecture);
+			if (resourceUrl == null) {
+				throw new FileNotFoundException("Layout file not found: " + filename);
+			}
 
-		String ligne;
+			// Convert URL to File
+			File layoutFile = new File(resourceUrl.toURI());
 
-		int nbX=0;
-		int nbY=0;
+			InputStream flux =new FileInputStream(layoutFile);
+			InputStreamReader lecture =new InputStreamReader(flux);
+			buffer = new BufferedReader(lecture);
 
-		while ((ligne = buffer.readLine())!=null)
-		{
-			ligne = ligne.trim();
-			if (nbX==0) {nbX = ligne.length();}
-			else if (nbX != ligne.length()) throw new Exception("Toutes les lignes doivent avoir la même longueur");
-			nbY++;
-		}
-		buffer.close();
+			String ligne;
 
-		size_x = nbX;
-		size_y = nbY;
+			int nbX=0;
+			int nbY=0;
 
-		walls = new boolean [size_x][size_y];
+			while ((ligne = buffer.readLine())!=null) {
+				ligne = ligne.trim();
+				if (nbX==0) {nbX = ligne.length();}
+				else if (nbX != ligne.length()) throw new Exception("Toutes les lignes doivent avoir la même longueur");
+				nbY++;
+			}
+			buffer.close();
 
-		flux = new FileInputStream(filename);
-		lecture = new InputStreamReader(flux);
-		buffer = new BufferedReader(lecture);
-		int y=0;
+			size_x = nbX;
+			size_y = nbY;
+
+			walls = new boolean [size_x][size_y];
+
+			flux = new FileInputStream(layoutFile);
+			lecture = new InputStreamReader(flux);
+			buffer = new BufferedReader(lecture);
+			int y=0;
 
 
-		start_snakes = new ArrayList<FeaturesSnake>();
-		start_items = new ArrayList<FeaturesItem>();
+			start_snakes = new ArrayList<FeaturesSnake>();
+			start_items = new ArrayList<FeaturesItem>();
 
-		int id = 0;
+			int id = 0;
 
-		while ((ligne=buffer.readLine())!=null)
-		{
-			ligne=ligne.trim();
+			while ((ligne=buffer.readLine())!=null) {
+				ligne=ligne.trim();
 
-			for(int x=0;x<ligne.length();x++)
-			{
+				for(int x=0;x<ligne.length();x++) {
 
-				if (ligne.charAt(x)=='%')
+					if (ligne.charAt(x)=='%')
 					walls[x][y]=true;
 
-				else walls[x][y]=false;
+					else walls[x][y]=false;
 
+					if (ligne.charAt(x)=='S' ) {
+						ArrayList<Position> pos = new ArrayList<Position>();
+						pos.add(new Position(x,y));
+						start_snakes.add(new FeaturesSnake(pos, AgentAction.MOVE_DOWN,colorSnake[id%colorSnake.length], false, false));
+						id++;
+					}
 
+					if (ligne.charAt(x)=='A') {
+						start_items.add(new FeaturesItem(x, y, ItemType.APPLE));
+					}
 
-				if (ligne.charAt(x)=='S' ) {
+					if (ligne.charAt(x)=='B') {
+						start_items.add(new FeaturesItem(x, y, ItemType.BOX));
+					}
 
-					ArrayList<Position> pos = new ArrayList<Position>();
-					pos.add(new Position(x,y));
+					if (ligne.charAt(x)=='Y') {
+						start_items.add(new FeaturesItem(x, y, ItemType.SICK_BALL));
+					}
 
-
-					start_snakes.add(new FeaturesSnake(pos, AgentAction.MOVE_DOWN,colorSnake[id%colorSnake.length], false, false));
-					id++;
+					if (ligne.charAt(x)=='M') {
+						start_items.add(new FeaturesItem(x, y, ItemType.INVINCIBILITY_BALL));
+					}
 				}
-
-				if (ligne.charAt(x)=='A') {
-
-
-					start_items.add(new FeaturesItem(x, y, ItemType.APPLE));
-
-
-				}
-
-				if (ligne.charAt(x)=='B') {
-
-
-					start_items.add(new FeaturesItem(x, y, ItemType.BOX));
-
-
-				}
-
-				if (ligne.charAt(x)=='Y') {
-
-
-					start_items.add(new FeaturesItem(x, y, ItemType.SICK_BALL));
-
-
-				}
-
-				if (ligne.charAt(x)=='M') {
-
-
-					start_items.add(new FeaturesItem(x, y, ItemType.INVINCIBILITY_BALL));
-
-
-				}
-
+				y++;
 			}
-			y++;
-		}
-
-		buffer.close();
-
-
-		}catch (Exception e){
+			buffer.close();
+		} catch (Exception e){
 			System.out.println("Erreur : "+e.getMessage());
 		}
-
-
 	}
-
-
 
 	public int getSizeX() {return(size_x);}
 	public int getSizeY() {return(size_y);}
-
-
 
 
 	public String getFilename(){
@@ -162,7 +141,6 @@ public class InputMap implements Serializable {
 		return walls;
 	}
 
-
 	public ArrayList<FeaturesSnake> getStart_snakes() {
 		return start_snakes;
 	}
@@ -170,7 +148,4 @@ public class InputMap implements Serializable {
 	public ArrayList<FeaturesItem> getStart_items() {
 		return start_items;
 	}
-
-
-
 }

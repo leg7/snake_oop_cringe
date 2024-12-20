@@ -122,8 +122,8 @@ public class PanelSnakeGame extends JPanel{
 
 		for(int i = 0; i < positions.size(); i++) {
 
-			pos_x=positions.get(i).getX()*stepx;
-			pos_y=positions.get(i).getY()*stepy;
+			pos_x=positions.get(i).x()*stepx;
+			pos_y=positions.get(i).y()*stepy;
 
 
 			if(i == 0) {

@@ -22,7 +22,6 @@ public abstract class Game implements Runnable {
 		this.turnMax = turnMax;
 		this.sleepDelay = sleepDelay;
 		pcs = new PropertyChangeSupport(this);
-		init();
 	}
 
 	abstract protected void takeTurn();

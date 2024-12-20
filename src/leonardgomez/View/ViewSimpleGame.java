@@ -28,6 +28,10 @@ public class ViewSimpleGame implements PropertyChangeListener {
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {
-		jLabel.setText("Turn :" + e.getNewValue());
+		switch (e.getPropertyName()) {
+			case "turn":
+				jLabel.setText("Turn :" + e.getNewValue());
+			break;
+		}
 	}
 }

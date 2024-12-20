@@ -12,21 +12,29 @@ public class ControllerSnakeGame extends AbstractController {
 	ViewSnakeGame viewSnakeGame;
 
 	public ControllerSnakeGame() {
-		InputMap im = null;
-		try {
-			im = new InputMap("/persistent/home/user/documents/education/universite_angers/mi/m1/blocs/design-patterns/projet/bin/layouts/aloneNoWall.lay");
-		} catch (Exception e) {}
+		var im = inputMap("/layouts/arenaNoWall.lay");
 
-		// View
-		var p = new PanelSnakeGame(im.getSizeX(), im.getSizeY(), im.get_walls(), im.getStart_snakes(), im.getStart_items());
+		var p = new PanelSnakeGame(
+			im.getSizeX(), im.getSizeY(),
+			im.get_walls(),
+			im.getStart_snakes(), im.getStart_items()
+		);
 		viewSnakeGame = new ViewSnakeGame(p);
 
-		// Model
-
-		this.g = new SnakeGame(10, 100, im);
+		this.g = new SnakeGame(100, 100, im);
+		g.init();
 		this.g.addPropertyChangeListener(viewSnakeGame);
 
-		// Command
 		viewCommand = new ViewCommand(g, this);
+	}
+
+	public InputMap inputMap(String filename) {
+		try {
+			return new InputMap(filename);
+		} catch (Exception e) {
+			System.out.println("Couldn't import layout file");
+			System.exit(69);
+		}
+		return null;
 	}
 }

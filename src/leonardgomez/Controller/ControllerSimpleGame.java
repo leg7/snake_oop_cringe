@@ -12,6 +12,7 @@ public class ControllerSimpleGame extends AbstractController {
 
 		g = new SimpleGame(10, 500);
 		g.addPropertyChangeListener(viewSimpleGame);
+		g.init();
 
 		viewCommand = new ViewCommand(g, this);
 	}
