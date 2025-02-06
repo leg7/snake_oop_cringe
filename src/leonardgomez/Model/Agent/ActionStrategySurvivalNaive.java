@@ -24,11 +24,6 @@ public class ActionStrategySurvivalNaive implements ActionStrategy {
 
 			var nextPos = a.nextPosition(randomAction);
 			suicide = a.getPositions().contains(nextPos);
-			/* System.out.println(suicide);
-			System.out.println(randomAction);
-			System.out.println(a.getPositions());
-			System.out.println(nextPos);
-			System.out.println(); */
 		} while (actions.size() > 0 && (suicide || a.setAction(randomAction) == false));
 	}
 }

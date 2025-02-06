@@ -22,9 +22,9 @@ public class ControllerSnakeGame extends AbstractController {
 		viewSnakeGame = new ViewSnakeGame(p);
 
 		var turns = 1000;
-		var turnTime = 150;
-		// var sg = new SnakeGameAI(turns, turnTime, im);
-		var sg = new SnakeGamePVP(turns, turnTime, im, viewSnakeGame);
+		var turnTime = 50;
+		//var sg = new SnakeGameAI(turns, turnTime, im);
+		 var sg = new SnakeGamePVP(turns, turnTime, im, viewSnakeGame);
 
 		this.g = sg;
 		g.init();
