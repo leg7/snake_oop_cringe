@@ -6,6 +6,6 @@ public class Main {
 
 		}
 
-		System.out.prinln("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	}
 }
