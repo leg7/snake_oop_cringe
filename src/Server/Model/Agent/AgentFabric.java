@@ -1,8 +1,8 @@
 package Server.Model.Agent;
 
-import leonardgomez.Model.Agent.*;
-import leonardgomez.Model.SnakeGame;
-import utils.*;
+import Server.Model.Agent.*;
+import Server.Model.SnakeGame;
+import Utils.*;
 
 import java.util.ArrayList;
 import java.awt.event.KeyEvent;

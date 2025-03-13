@@ -1,6 +1,6 @@
 package Server.Model.Agent;
 
-import leonardgomez.Model.Agent.*;
+import Server.Model.Agent.*;
 
 public interface AgentUserControlled extends Agent {
 	public AgentKeybindings keybindings();

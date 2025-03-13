@@ -1,7 +1,7 @@
 package Server.Model.Agent;
 
 import java.util.ArrayList;
-import utils.*;
+import Utils.*;
 
 public interface Agent {
 	ArrayList<Position> getPositions();
