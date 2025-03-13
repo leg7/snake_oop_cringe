@@ -6,12 +6,9 @@ import Utils.*;
 import java.util.ArrayList;
 
 public class SnakeGamePVP extends SnakeGame {
-	//private ViewSnakeGame view; // necessaire pour le clavier
-
-	// public SnakeGamePVP(int turnMax, long sleepDelay, InputMap inputMap, ViewSnakeGame view) {
-	// 	super(turnMax, sleepDelay, inputMap);
-	// 	this.view = view;
-	// }
+	public SnakeGamePVP(int turnMax, long sleepDelay, InputMap inputMap) {
+		super(turnMax, sleepDelay, inputMap);
+	}
 
 	@Override
 	protected void initializeGame() {
@@ -37,8 +34,6 @@ public class SnakeGamePVP extends SnakeGame {
 		agents = new ArrayList<Agent>();
 		agents.add(a1);
 		agents.add(a2);
-		// view.addAgentUserControlled(a1);
-		// view.addAgentUserControlled(a2);
 
 		super.initializeGame();
 	}
