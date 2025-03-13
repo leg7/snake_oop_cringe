@@ -1,5 +1,5 @@
 package Server.Model.Item;
 
-import utils.*;
+import Utils.*;
 
 public record Item(Position position, ItemType type) {}
