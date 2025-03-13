@@ -1,0 +1,46 @@
+package Server.Model;
+
+import Server.Model.Agent.*;
+import Utils.*;
+
+import java.util.ArrayList;
+
+public class SnakeGamePVP extends SnakeGame {
+	//private ViewSnakeGame view; // necessaire pour le clavier
+
+	// public SnakeGamePVP(int turnMax, long sleepDelay, InputMap inputMap, ViewSnakeGame view) {
+	// 	super(turnMax, sleepDelay, inputMap);
+	// 	this.view = view;
+	// }
+
+	@Override
+	protected void initializeGame() {
+		var snakes = inputMap.getStart_snakes();
+
+		var s1 = snakes.get(0);
+		var s2 = snakes.get(1);
+		var a1 = (AgentUserControlled)AgentFabric.snakeUserControlledZQSD(
+					new ArrayList<Position>(s1.getPositions()),
+					s1.getLastAction(),
+					s1.isInvincible() ? snakeInvincibleRounds : 0,
+					s1.isSick() ? snakeSickRounds : 0,
+					s1.getColorSnake(),
+					this);
+		var a2 = (AgentUserControlled)AgentFabric.snakeUserControlledPad(
+					new ArrayList<Position>(s2.getPositions()),
+					s2.getLastAction(),
+					s2.isInvincible() ? snakeInvincibleRounds : 0,
+					s2.isSick() ? snakeSickRounds : 0,
+					s2.getColorSnake(),
+					this);
+
+		agents = new ArrayList<Agent>();
+		agents.add(a1);
+		agents.add(a2);
+		// view.addAgentUserControlled(a1);
+		// view.addAgentUserControlled(a2);
+
+		super.initializeGame();
+	}
+
+}
