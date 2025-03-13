@@ -1,7 +1,7 @@
 package Client.View;
 
 import Client.View.PanelSnakeGame;
-import Client.Model.Agent.AgentUserControlled;
+import Server.Model.Agent.AgentUserControlled;
 import Utils.*;
 
 import java.awt.Graphics;
