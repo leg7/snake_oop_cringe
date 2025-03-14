@@ -47,7 +47,10 @@ public class ControllerClient {
 		//
 		// }
 
-		t.interrupt();
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+		}
 
 		so.close();
 	}
