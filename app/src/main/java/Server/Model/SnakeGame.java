@@ -174,6 +174,14 @@ public abstract class SnakeGame extends Game {
 		updateView();
 	}
 
+	public ArrayList<Agent> getAgents() {
+		return agents;
+	}
+
+	public void setAgentAction(Agent agent, AgentAction action) {
+		agent.setAction(action);
+	}
+
 	@Override
 	final protected void gameOver() {
 		System.out.println("Game Over");
