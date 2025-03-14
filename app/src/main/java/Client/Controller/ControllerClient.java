@@ -14,7 +14,7 @@ public class ControllerClient {
 	private ViewSnakeGame viewSnakeGame;
 
 	public ControllerClient() {
-		var im = inputMap("/layouts/arenaNoWall.lay");
+		var im = inputMap("layouts/arenaNoWall.lay");
 
 		var p = new PanelSnakeGame(
 				im.getSizeX(), im.getSizeY(),

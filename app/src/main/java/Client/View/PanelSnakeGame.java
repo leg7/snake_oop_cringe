@@ -8,7 +8,10 @@ import java.awt.image.RescaleOp;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+
 import javax.imageio.ImageIO;
+
 import java.util.ArrayList;
 import javax.swing.JPanel;
 
@@ -43,6 +46,9 @@ public class PanelSnakeGame extends JPanel{
 
 	int cpt;
 
+	Class cls;
+	ClassLoader cLoader;
+
 	public PanelSnakeGame(int sizeX, int sizeY, boolean[][] walls, ArrayList<FeaturesSnake> featuresSnakes, ArrayList<FeaturesItem> featuresItems) {
 
 		this.sizeX = sizeX;
@@ -51,6 +57,10 @@ public class PanelSnakeGame extends JPanel{
 		this.featuresSnakes = featuresSnakes;
 		this.featuresItems = featuresItems;
 
+		try {
+			this.cls = Class.forName("Client.View.PanelSnakeGame");
+			this.cLoader = cls.getClassLoader();
+		} catch (Exception e) { }
 	}
 
 	public void paint(Graphics g){
@@ -75,7 +85,7 @@ public class PanelSnakeGame extends JPanel{
 				if (walls[x][y]){
 
 					try {
-						Image img = ImageIO.read(new File("./images/wall.png"));
+						Image img = ImageIO.read(cLoader.getResource("images/wall.png"));
 						g.drawImage(img, (int)position_x, (int)position_y, (int)stepx, (int)stepy, this);
 
 					} catch (IOException e) {
@@ -110,6 +120,8 @@ public class PanelSnakeGame extends JPanel{
 		double pos_y;
 		int cpt_img = -1;
 
+		URL test = cLoader.getResource("images/apple.png");
+
 		for(int i = 0; i < positions.size(); i++) {
 			pos_x=positions.get(i).x()*stepx;
 			pos_y=positions.get(i).y()*stepy;
@@ -138,9 +150,9 @@ public class PanelSnakeGame extends JPanel{
 
 			try {
 				if(featuresSnake.getColorSnake() == ColorSnake.Green) {
-					img = ImageIO.read(new File("./images/snake_green_" + cpt_img + ".png"));
+					img = ImageIO.read(cLoader.getResource("images/snake_green_" + cpt_img + ".png"));
 				} else if(featuresSnake.getColorSnake() == ColorSnake.Red ) {
-					img = ImageIO.read(new File("./images/snake_red_" + cpt_img + ".png"));
+					img = ImageIO.read(cLoader.getResource("images/snake_red_" + cpt_img + ".png"));
 				}
 
 			} catch (IOException e) {
@@ -167,6 +179,7 @@ public class PanelSnakeGame extends JPanel{
 				g.drawImage(img, (int)pos_x, (int)pos_y, (int)stepx, (int)stepy, this);
 			}
 		}
+
 	}
 
 
@@ -183,7 +196,7 @@ public class PanelSnakeGame extends JPanel{
 
 		if (featuresItem.getItemType() == ItemType.APPLE) {
 			try {
-				Image img = ImageIO.read(new File("./images/apple.png"));
+				Image img = ImageIO.read(cLoader.getResource("images/apple.png"));
 				g.drawImage(img, (int)pos_x, (int)pos_y, (int)stepx, (int)stepy, this);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -192,7 +205,7 @@ public class PanelSnakeGame extends JPanel{
 
 		if (featuresItem.getItemType() == ItemType.BOX) {
 			try {
-				Image img = ImageIO.read(new File("./images/mysteryBox.png"));
+				Image img = ImageIO.read(cLoader.getResource("images/mysteryBox.png"));
 				g.drawImage(img, (int)pos_x, (int)pos_y, (int)stepx, (int)stepy, this);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -202,7 +215,7 @@ public class PanelSnakeGame extends JPanel{
 
 		if (featuresItem.getItemType() == ItemType.SICK_BALL) {
 			try {
-				Image img = ImageIO.read(new File("./images/sickBall.png"));
+				Image img = ImageIO.read(cLoader.getResource("images/sickBall.png"));
 				g.drawImage(img, (int)pos_x, (int)pos_y, (int)stepx, (int)stepy, this);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -211,7 +224,7 @@ public class PanelSnakeGame extends JPanel{
 
 		if (featuresItem.getItemType() == ItemType.INVINCIBILITY_BALL) {
 			try {
-				Image img = ImageIO.read(new File("./images/invicibleBall.png"));
+				Image img = ImageIO.read(cLoader.getResource("images/invicibleBall.png"));
 				g.drawImage(img, (int)pos_x, (int)pos_y, (int)stepx, (int)stepy, this);
 			} catch (IOException e) {
 				e.printStackTrace();

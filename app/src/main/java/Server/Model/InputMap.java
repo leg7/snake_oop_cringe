@@ -41,16 +41,9 @@ public class InputMap implements Serializable {
 		this.filename = filename;
 
 		try{
-			URL resourceUrl = getClass().getResource(filename);
-
-			if (resourceUrl == null) {
-				throw new FileNotFoundException("Layout file not found: " + filename);
-			}
-
-			// Convert URL to File
-			File layoutFile = new File(resourceUrl.toURI());
-
-			InputStream flux =new FileInputStream(layoutFile);
+			Class cls = Class.forName("Server.Model.InputMap");
+			ClassLoader cLoader = cls.getClassLoader();
+			InputStream flux = cLoader.getResourceAsStream(filename);
 			InputStreamReader lecture =new InputStreamReader(flux);
 			buffer = new BufferedReader(lecture);
 
@@ -72,7 +65,7 @@ public class InputMap implements Serializable {
 
 			walls = new boolean [size_x][size_y];
 
-			flux = new FileInputStream(layoutFile);
+			flux = cLoader.getResourceAsStream(filename);
 			lecture = new InputStreamReader(flux);
 			buffer = new BufferedReader(lecture);
 			int y=0;
