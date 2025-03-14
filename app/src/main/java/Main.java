@@ -1,6 +1,11 @@
 import Client.Controller.*;
+import Server.Controller.*;
 
+import java.net.*;
+import java.io.*;
 import java.io.IOException;
+import java.util.Vector;
+
 
 public class Main {
 	final static int ERROR_BAD_ARG = 1;
@@ -18,6 +23,24 @@ public class Main {
 		}
 
 		if (args[0].equals("server")) {
+			//Vector<Socket> clients = new Vector<>();
+			ServerSocket serveurSocket;
+
+			try {
+				serveurSocket = new ServerSocket(port);
+				System.out.println("Serveur mis en place.");
+
+				while (true) {   // le serveur va attendre qu'une connexion arrive
+					Socket socket = serveurSocket.accept();
+					//clients.add(socket);
+					ControllerServer controllerServer = new ControllerServer(socket);
+
+					Thread thread = new Thread(controllerServer);
+					thread.start();
+				}
+			} catch (IOException e) {
+				System.err.println("problème\n"+e);
+			}
 
 		} else if (args[0].equals("client")) {
 			ControllerClient c = new ControllerClient();

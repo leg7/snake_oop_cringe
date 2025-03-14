@@ -26,9 +26,10 @@ public class ControllerServer implements Runnable {
 	public ControllerServer (SnakeGame game, Socket socket, Vector<Socket> clients) {
 		super();
 		this.game = game;
-		ArrayList<Agent> agentsList = game.getAgents();
 		this.socket = socket;
+		this.clients = clients;
 
+		ArrayList<Agent> agentsList = game.getAgents();
 		for (int i = 0; i < agentsList.size(); i++) {
 			AgentUserControlled a = (AgentUserControlled) agentsList.get(i);
 			if (a != null) {
@@ -39,6 +40,10 @@ public class ControllerServer implements Runnable {
 		game.launch();
 	}
 
+	public ControllerServer (Socket socket) {
+		super();
+		this.socket = socket;
+	}
 
 	public void run() {
 		try {
@@ -46,21 +51,26 @@ public class ControllerServer implements Runnable {
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String ch;  // la chaine recue
 
-			while ((ch = in.readLine()) != null) {
+			// while ((ch = in.readLine()) != null) {
 
-				for (Socket client : clients) {
-					DataOutputStream out = new DataOutputStream(client.getOutputStream());
-					out.writeUTF("Répond : " + ch);
-				}
+			for (int i = 0; i < 10; i++) {
+				// for (Socket client : clients) {
+					// DataOutputStream out = new DataOutputStream(client.getOutputStream());
+					DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+				System.out.println("send coucou " + i);
+					out.writeUTF("coucou " + i);
+				// }
 
 				//System.out.println("Client " + clients.indexOf(socket) + " -- " + ch + " -> " + clients.indexOf(client));
 			}
 
 			//System.out.println("Connexion fermé avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress());
-			clients.remove(socket);
+			// clients.remove(socket);
+
 			socket.close();
+			System.out.println("server close");
 		} catch (IOException e) {
-			System.err.println("Erreur avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress() + "\t" + e);
+			// System.err.println("Erreur avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress() + "\t" + e);
 		}
 	}
 
