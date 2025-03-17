@@ -53,12 +53,22 @@ public abstract class Game implements Runnable {
 		thread.start();
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener pl) {
-		this.pcs.addPropertyChangeListener(pl);
+
+	// Property method
+	public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
+		this.pcs.addPropertyChangeListener(property, listener);
 	}
 
-	public void removePropertyChangeListener(PropertyChangeListener pl) {
-		this.pcs.removePropertyChangeListener(pl);
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		this.pcs.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
+		this.pcs.removePropertyChangeListener(property, listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		this.pcs.removePropertyChangeListener(listener);
 	}
 
 	public int getTurn() { return turn; }

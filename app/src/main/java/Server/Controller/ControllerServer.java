@@ -42,7 +42,7 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 		}
 
 		// S'inscrire comme listener du modèle SnakeGame
-		game.addPropertyChangeListener(this);
+		game.addPropertyChangeListener("update", this);
 	}
 
 	public ControllerServer (Socket socket) {
@@ -103,7 +103,7 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 
 	public void propertyChange(PropertyChangeEvent e) {
 		switch (e.getPropertyName()) {
-			case "features":
+			case "update":
 				var obj = e.getNewValue();
 				if (obj instanceof Features(var fss, var fis)) {
 				 	Features features = (Features) obj;
