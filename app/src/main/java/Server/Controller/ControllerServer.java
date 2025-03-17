@@ -55,8 +55,10 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 			connexionLog();
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String ch;  // la chaine recue
+			Gson gson = new Gson();
 
 			 while ((ch = in.readLine()) != null) {
+				ch = gson.fromJson(ch, String.class);
 
 				for (Socket client : clients) {
 					DataOutputStream out = new DataOutputStream(client.getOutputStream());
