@@ -47,30 +47,28 @@ public class ControllerServer implements Runnable {
 
 	public void run() {
 		try {
-			//System.out.println("Connexion établie avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress());
+			connexionLog();
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String ch;  // la chaine recue
 
-			// while ((ch = in.readLine()) != null) {
+			 while ((ch = in.readLine()) != null) {
 
-			for (int i = 0; i < 10; i++) {
-				// for (Socket client : clients) {
-					// DataOutputStream out = new DataOutputStream(client.getOutputStream());
-					DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-				System.out.println("send coucou " + i);
-					out.writeUTF("coucou " + i);
-				// }
+				for (Socket client : clients) {
+					DataOutputStream out = new DataOutputStream(client.getOutputStream());
+					clientMoveLog(socket, ch);
+					handleCommand(clientToAgent.get(socket), ch);
+					sendGameState();
+				}
 
-				//System.out.println("Client " + clients.indexOf(socket) + " -- " + ch + " -> " + clients.indexOf(client));
 			}
 
-			//System.out.println("Connexion fermé avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress());
-			// clients.remove(socket);
+			deconnexionLog();
+			clients.remove(socket);
 
 			socket.close();
 			System.out.println("server close");
 		} catch (IOException e) {
-			// System.err.println("Erreur avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress() + "\t" + e);
+			System.err.println("Erreur avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress() + "\t" + e);
 		}
 	}
 
@@ -93,10 +91,23 @@ public class ControllerServer implements Runnable {
 		}
 	}
 
-	private String sendGameState() {
+	private void sendGameState() {
 		Gson gson = new Gson();
-		String json = gson.toJson(game);
-		return json;
+		String json = gson.toJson(game.getAgents());
+		json += gson.toJson(game.getItems());
+		System.out.println(json);
+	}
+
+	private void connexionLog() {
+		System.out.println("Connexion établie avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress());
+	}
+
+	private void deconnexionLog() {
+		System.out.println("Connexion fermé avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress());
+	}
+
+	private void clientMoveLog(Socket client, String direction) {
+		System.out.println("Client : " + clients.indexOf(socket) + " - Move : " + direction);
 	}
 
 }

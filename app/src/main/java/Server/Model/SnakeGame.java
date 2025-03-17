@@ -178,6 +178,10 @@ public abstract class SnakeGame extends Game {
 		return agents;
 	}
 
+	public ArrayList<Item> getItems() {
+		return items;
+	}
+
 	public void setAgentAction(Agent agent, AgentAction action) {
 		agent.setAction(action);
 	}
