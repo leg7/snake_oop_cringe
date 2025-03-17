@@ -5,8 +5,8 @@ import Utils.*;
 
 import java.util.ArrayList;
 
-public class SnakeGamePVP extends SnakeGame {
-	public SnakeGamePVP(int turnMax, long sleepDelay, InputMap inputMap) {
+public class SnakeGameSolo extends SnakeGame {
+	public SnakeGameSolo(int turnMax, long sleepDelay, InputMap inputMap) {
 		super(turnMax, sleepDelay, inputMap);
 	}
 
@@ -25,19 +25,11 @@ public class SnakeGamePVP extends SnakeGame {
 					s1.getColorSnake(),
 					this);
 
-		var a2 = (AgentUserControlled)AgentFabric.snakeUserControlledPad(
-					new ArrayList<Position>(s2.getPositions()),
-					s2.getLastAction(),
-					s2.isInvincible() ? snakeInvincibleRounds : 0,
-					s2.isSick() ? snakeSickRounds : 0,
-					s2.getColorSnake(),
-					this);
-
 		agents = new ArrayList<Agent>();
 		agents.add(a1);
-		agents.add(a2);
 
 		super.initializeGame();
 	}
+
 
 }

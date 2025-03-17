@@ -4,15 +4,18 @@ import Server.Model.Agent.*;
 import Utils.*;
 
 import java.util.ArrayList;
+import java.util.stream.*;
 
-public class SnakeGamePVP extends SnakeGame {
-	public SnakeGamePVP(int turnMax, long sleepDelay, InputMap inputMap) {
+public class SnakeGamePVE extends SnakeGame {
+	public SnakeGamePVE(int turnMax, long sleepDelay, InputMap inputMap) {
 		super(turnMax, sleepDelay, inputMap);
 	}
 
-
 	@Override
 	protected void initializeGame() {
+
+		super.initializeGame();
+
 		var snakes = inputMap.getStart_snakes();
 
 		var s1 = snakes.get(0);
@@ -25,7 +28,7 @@ public class SnakeGamePVP extends SnakeGame {
 					s1.getColorSnake(),
 					this);
 
-		var a2 = (AgentUserControlled)AgentFabric.snakeUserControlledPad(
+		var a2 = (AgentUserControlled)AgentFabric.snakeAISurvivalNaive(
 					new ArrayList<Position>(s2.getPositions()),
 					s2.getLastAction(),
 					s2.isInvincible() ? snakeInvincibleRounds : 0,

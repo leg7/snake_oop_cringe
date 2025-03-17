@@ -12,12 +12,13 @@ import java.net.Socket;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.beans.*;
 import com.google.gson.Gson;
 
 
 // Handle du serveur :
 // recoit les commandes, maj le game et renvoie l'état du jeu.
-public class ControllerServer implements Runnable {
+public class ControllerServer implements Runnable, PropertyChangeListener {
 	SnakeGame game;
     	private Socket socket;
     	Vector<Socket> clients = new Vector<>();
@@ -31,13 +32,17 @@ public class ControllerServer implements Runnable {
 
 		ArrayList<Agent> agentsList = game.getAgents();
 		for (int i = 0; i < agentsList.size(); i++) {
-			AgentUserControlled a = (AgentUserControlled) agentsList.get(i);
-			if (a != null) {
-				clientToAgent.put(socket, a);
+			if (agentsList.get(i) instanceof AgentUserControlled) {
+				AgentUserControlled a = (AgentUserControlled) agentsList.get(i);
+				if (!clientToAgent.containsValue(a)) {
+					clientToAgent.put(socket, a);
+					break;
+				}
 			}
 		}
 
-		game.launch();
+		// S'inscrire comme listener du modèle SnakeGame
+		game.addPropertyChangeListener(this);
 	}
 
 	public ControllerServer (Socket socket) {
@@ -57,15 +62,20 @@ public class ControllerServer implements Runnable {
 					DataOutputStream out = new DataOutputStream(client.getOutputStream());
 					clientMoveLog(socket, ch);
 					handleCommand(clientToAgent.get(socket), ch);
-					sendGameState();
 				}
-
 			}
 
 			deconnexionLog();
 			clients.remove(socket);
+			clientToAgent.remove(socket);
 
 			socket.close();
+
+			// Lobby vide, on arrête le jeu
+			if (clients.isEmpty() && game != null) {
+				game.removePropertyChangeListener(this);
+			}
+
 			System.out.println("server close");
 		} catch (IOException e) {
 			System.err.println("Erreur avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress() + "\t" + e);
@@ -91,11 +101,41 @@ public class ControllerServer implements Runnable {
 		}
 	}
 
-	private void sendGameState() {
-		Gson gson = new Gson();
-		String json = gson.toJson(game.getAgents());
-		json += gson.toJson(game.getItems());
-		System.out.println(json);
+	public void propertyChange(PropertyChangeEvent e) {
+		switch (e.getPropertyName()) {
+			case "features":
+				var obj = e.getNewValue();
+				if (obj instanceof Features(var fss, var fis)) {
+				 	Features features = (Features) obj;
+					sendGameState(features);
+				} else {
+					System.exit(69);
+				}
+			break;
+
+			default:
+				System.exit(69);
+		}
+	}
+
+	private void sendGameState(Features features) {
+		try {
+			Gson gson = new Gson();
+			String json = gson.toJson(features);
+
+			// Envoyer à tous les clients connectés
+			for (Socket client : clients) {
+				try {
+					DataOutputStream out = new DataOutputStream(client.getOutputStream());
+					out.writeUTF(json);
+					out.flush();
+				} catch (IOException ex) {
+					System.err.println("Erreur lors de l'envoi au client: " + ex.getMessage());
+				}
+			}
+		} catch (Exception ex) {
+			System.err.println("Erreur lors de la sérialisation/envoi: " + ex.getMessage());
+		}
 	}
 
 	private void connexionLog() {

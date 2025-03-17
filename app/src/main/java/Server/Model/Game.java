@@ -12,7 +12,6 @@ public abstract class Game implements Runnable {
 
 	abstract protected void initializeGame();
 	public void init() {
-		pcs.firePropertyChange("turn", turn, 0);
 		turn = 0;
 		isRunning = false;
 		initializeGame();
@@ -27,9 +26,9 @@ public abstract class Game implements Runnable {
 	abstract protected void takeTurn();
 	abstract protected boolean gameContinue();
 	abstract protected void gameOver();
+
 	public void step() {
 		if (gameContinue() && turn < turnMax) {
-			pcs.firePropertyChange("turn", turn, ++turn);
 			takeTurn();
 		} else {
 			isRunning = false;
@@ -67,4 +66,5 @@ public abstract class Game implements Runnable {
 	public void setSleepDelay(long speed) {
 		sleepDelay = speed;
 	}
+
 }

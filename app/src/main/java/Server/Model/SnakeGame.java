@@ -44,6 +44,7 @@ public abstract class SnakeGame extends Game {
 		pcs.firePropertyChange("features", null, features);
 	}
 
+
 	@Override
 	protected void initializeGame() {
 		// initialize the snakes of the input map in your subclass
@@ -198,5 +199,6 @@ public abstract class SnakeGame extends Game {
 	}
 
 	public InputMap inputMap() { return inputMap; }
-	public ArrayList<Agent> agents() { return agents; }
+
+
 }
