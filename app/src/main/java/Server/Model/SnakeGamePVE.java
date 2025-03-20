@@ -12,10 +12,7 @@ public class SnakeGamePVE extends SnakeGame {
 	}
 
 	@Override
-	protected void initializeGame() {
-
-		super.initializeGame();
-
+	public void reinitialize() {
 		var snakes = inputMap.getStart_snakes();
 
 		var s1 = snakes.get(0);
@@ -39,7 +36,7 @@ public class SnakeGamePVE extends SnakeGame {
 		agents.add(a1);
 		agents.add(a2);
 
-		super.initializeGame();
+		super.reinitialize();
 	}
 
 }

@@ -10,13 +10,12 @@ public class SnakeGameSolo extends SnakeGame {
 		super(turnMax, sleepDelay, inputMap);
 	}
 
-
 	@Override
-	protected void initializeGame() {
+	public void reinitialize() {
 		var snakes = inputMap.getStart_snakes();
 
+		assert snakes.size() == 1;
 		var s1 = snakes.get(0);
-		var s2 = snakes.get(1);
 		var a1 = (AgentUserControlled)AgentFabric.snakeUserControlledZQSD(
 					new ArrayList<Position>(s1.getPositions()),
 					s1.getLastAction(),
@@ -27,7 +26,7 @@ public class SnakeGameSolo extends SnakeGame {
 
 		agents.add(a1);
 
-		super.initializeGame();
+		super.reinitialize();
 	}
 
 

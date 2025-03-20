@@ -12,7 +12,7 @@ public class SnakeGameAI extends SnakeGame {
 	}
 
 	@Override
-	protected void initializeGame() {
+	public void reinitialize() {
 		agents = inputMap.getStart_snakes().stream()
 			.map(fs -> AgentFabric.snakeAISurvivalNaive(
 					new ArrayList<Position>(fs.getPositions()),
@@ -24,6 +24,6 @@ public class SnakeGameAI extends SnakeGame {
 			)
 			.collect(Collectors.toCollection(ArrayList::new));
 
-		super.initializeGame();
+		super.reinitialize();
 	}
 }
