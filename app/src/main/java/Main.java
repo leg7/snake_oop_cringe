@@ -7,7 +7,6 @@ import java.io.*;
 import java.io.IOException;
 import java.util.Vector;
 
-
 public class Main {
 	final static int ERROR_BAD_ARG = 1;
 	final static int port = 8080;
@@ -31,13 +30,15 @@ public class Main {
 				serveurSocket = new ServerSocket(port);
 				System.out.println("Serveur mis en place.");
 
-				InputMap inputMap = new InputMap("layouts/alone.lay");
-				SnakeGame snakeGameSolo = new SnakeGameSolo(1000, 1000, inputMap);
+				InputMap inputMap = new InputMap("layouts/arenaNoWall.lay");
+				SnakeGame snakeGameSolo = new SnakeGamePVP(1000, 1000, inputMap);
 
-				while (true) {   // le serveur va attendre qu'une connexion arrive
+				while (true) { // le serveur va attendre qu'une connexion arrive
 					Socket socket = serveurSocket.accept();
 					clients.add(socket);
-					ControllerServer controllerServer = new ControllerServer(snakeGameSolo, socket, clients);
+					snakeGameSolo.launch();
+					ControllerServer controllerServer = new ControllerServer(snakeGameSolo, socket,
+							clients);
 
 					Thread thread = new Thread(controllerServer);
 					thread.start();
@@ -46,12 +47,12 @@ public class Main {
 				e.printStackTrace();
 			}
 
-
 		} else if (args[0].equals("client")) {
 			ControllerClient c = new ControllerClient();
 			try {
 				c.start(ip, port);
-			} catch (IOException e) { }
+			} catch (IOException e) {
+			}
 		} else {
 			badArg();
 		}

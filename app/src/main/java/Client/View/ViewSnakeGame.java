@@ -25,10 +25,11 @@ public class ViewSnakeGame implements PropertyChangeListener, WindowStateListene
 		return closed;
 	}
 
-	public ViewSnakeGame(PanelSnakeGame p) {
+	public ViewSnakeGame(ControllerClient controller, PanelSnakeGame p) {
 		super();
 		this.p = p;
 		pcs = new PropertyChangeSupport(this);
+		controller.addPropertyChangeListener(this);
 		frame = new JFrame("Snake game");
 		frame.add(p);
 		frame.setSize(500, 500);
@@ -51,6 +52,7 @@ public class ViewSnakeGame implements PropertyChangeListener, WindowStateListene
 				var obj = e.getNewValue();
 				if (obj instanceof Features(var fss, var fis)) {
 					p.updateInfoGame(fss, fis);
+					p.repaint();
 				} else {
 					System.exit(69);
 				}

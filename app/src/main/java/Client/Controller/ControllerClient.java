@@ -3,9 +3,11 @@ package Client.Controller;
 import Client.View.ViewSnakeGame;
 import Client.View.PanelSnakeGame;
 import Server.Model.InputMap;
+import Utils.Features;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -21,16 +23,18 @@ public class ControllerClient implements PropertyChangeListener {
 	private ViewSnakeGame viewSnakeGame;
 	private Gson gson;
 	private Socket socket;
+	private PropertyChangeSupport pcs;
 
 	public ControllerClient() {
 		gson = new Gson();
+		pcs = new PropertyChangeSupport(this);
 		var im = inputMap("layouts/arenaNoWall.lay");
 
 		var p = new PanelSnakeGame(
 				im.getSizeX(), im.getSizeY(),
 				im.get_walls(),
 				im.getStart_snakes(), im.getStart_items());
-		viewSnakeGame = new ViewSnakeGame(p);
+		viewSnakeGame = new ViewSnakeGame(this, p);
 		viewSnakeGame.addPropertyChangeListener(this);
 	}
 
@@ -47,6 +51,8 @@ public class ControllerClient implements PropertyChangeListener {
 					String msg;
 					while ((msg = soIn.readUTF()) != null && !Thread.interrupted()) {
 						System.out.println(msg);
+						pcs.firePropertyChange("features", null,
+								gson.fromJson(msg, Features.class));
 					}
 				} catch (IOException e) {
 				}
@@ -60,6 +66,14 @@ public class ControllerClient implements PropertyChangeListener {
 		}
 
 		socket.close();
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener pcl) {
+		pcs.addPropertyChangeListener(pcl);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener pcl) {
+		pcs.removePropertyChangeListener(pcl);
 	}
 
 	@Override
