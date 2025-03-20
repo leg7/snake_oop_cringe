@@ -36,7 +36,6 @@ public class SnakeGamePVE extends SnakeGame {
 					s2.getColorSnake(),
 					this);
 
-		agents = new ArrayList<Agent>();
 		agents.add(a1);
 		agents.add(a2);
 

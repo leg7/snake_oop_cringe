@@ -25,7 +25,6 @@ public class SnakeGameSolo extends SnakeGame {
 					s1.getColorSnake(),
 					this);
 
-		agents = new ArrayList<Agent>();
 		agents.add(a1);
 
 		super.initializeGame();

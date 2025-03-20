@@ -27,6 +27,8 @@ public abstract class SnakeGame extends Game {
 	public SnakeGame(int turnMax, long sleepDelay, InputMap inputMap) {
 		super(turnMax, sleepDelay);
 		this.inputMap = inputMap;
+		agents = new ArrayList<Agent>();
+		items = new ArrayList<Item>();
 	}
 
 	private void updateView() {
