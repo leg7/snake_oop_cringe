@@ -103,6 +103,7 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent e) {
 		switch (e.getPropertyName()) {
 			case "update":
+				System.out.println("update features : ");
 				var obj = e.getNewValue();
 				if (obj instanceof Features(var fss, var fis)) {
 				 	Features features = (Features) obj;
@@ -121,6 +122,7 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 		try {
 			Gson gson = new Gson();
 			String json = gson.toJson(features);
+			System.out.println(json);
 
 			// Envoyer à tous les clients connectés
 			for (Socket client : clients) {

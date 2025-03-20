@@ -40,7 +40,7 @@ public abstract class SnakeGame implements Runnable {
 	}
 
 	public void reinitialize() {
-		pcs.firePropertyChange("turn", turn, 0);
+		//pcs.firePropertyChange("turn", turn, 0);
 
 		turn = 0;
 		isRunning = false;
@@ -66,7 +66,7 @@ public abstract class SnakeGame implements Runnable {
 			.collect(Collectors.toCollection(ArrayList::new));
 
 		final var features = new Features(featuresSnake, featuresItem);
-		pcs.firePropertyChange("features", null, features);
+		pcs.firePropertyChange("update", null, features);
 	}
 
 
@@ -80,7 +80,8 @@ public abstract class SnakeGame implements Runnable {
 	public void run() {
 		boolean continueGame = agents.size() != 0;
 		while (continueGame && turn < turnMax && isRunning) {
-			pcs.firePropertyChange("turn", turn, ++turn);
+			//pcs.firePropertyChange("turn", turn, ++turn);
+			++turn;
 			var agentsToRemove = new HashSet<Agent>();
 
 			for (var a : agents) {
@@ -189,6 +190,7 @@ public abstract class SnakeGame implements Runnable {
 			agentsToRemove.forEach(a -> agents.remove(a));
 
 			updateView();
+			System.out.println("Update view - tour : " + turn);
 
 			try {
 				Thread.sleep(sleepDelay);
