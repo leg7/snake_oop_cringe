@@ -60,11 +60,8 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 			 while ((ch = in.readLine()) != null) {
 				ch = gson.fromJson(ch, String.class);
 
-				for (Socket client : clients) {
-					DataOutputStream out = new DataOutputStream(client.getOutputStream());
-					clientMoveLog(socket, ch);
-					handleCommand(clientToAgent.get(socket), ch);
-				}
+				clientMoveLog(socket, ch);
+				handleCommand(clientToAgent.get(socket), ch);
 			}
 
 			deconnexionLog();
