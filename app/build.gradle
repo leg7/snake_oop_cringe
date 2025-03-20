@@ -8,6 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'war'
 }
 
 repositories {
@@ -18,13 +19,16 @@ repositories {
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation libs.junit.jupiter
-
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // This dependency is used by the application.
     implementation libs.guava
 
     implementation 'com.google.code.gson:gson:2.12.1'
+
+    implementation 'jakarta.platform:jakarta.jakartaee-api:8.0.0'
+    implementation 'org.postgresql:postgresql:42.7.5'
+    implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:2.0.0'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.5'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
