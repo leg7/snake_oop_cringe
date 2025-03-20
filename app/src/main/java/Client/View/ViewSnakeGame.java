@@ -1,5 +1,6 @@
 package Client.View;
 
+import Client.Controller.ControllerClient;
 import Client.View.PanelSnakeGame;
 import Server.Model.Agent.AgentUserControlled;
 import Utils.*;
@@ -11,19 +12,37 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
-public class ViewSnakeGame implements PropertyChangeListener {
+public class ViewSnakeGame implements PropertyChangeListener, WindowStateListener {
 	private PanelSnakeGame p;
 	private JFrame frame;
+	private boolean closed;
+	private PropertyChangeSupport pcs;
+
+	public boolean isClosed() {
+		return closed;
+	}
 
 	public ViewSnakeGame(PanelSnakeGame p) {
 		super();
 		this.p = p;
+		pcs = new PropertyChangeSupport(this);
 		frame = new JFrame("Snake game");
 		frame.add(p);
 		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+		frame.addKeyListener(new MyKeyListener(this));
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener pcl) {
+		pcs.addPropertyChangeListener(pcl);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener pcl) {
+		pcs.removePropertyChangeListener(pcl);
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {
@@ -35,45 +54,53 @@ public class ViewSnakeGame implements PropertyChangeListener {
 				} else {
 					System.exit(69);
 				}
-			break;
+				break;
 
 			case "turn":
 				p.repaint();
-			break;
+				break;
 
 			default:
 				System.exit(69);
 		}
 	}
 
-	public void addAgentUserControlled(AgentUserControlled a) {
-		frame.addKeyListener(new MyKeyListener(a));
+	public void actionLeft() {
+		pcs.firePropertyChange("action", null, "LEFT");
+	}
+
+	public void actionRight() {
+		pcs.firePropertyChange("action", null, "RIGHT");
+	}
+
+	public void actionUp() {
+		pcs.firePropertyChange("action", null, "UP");
+	}
+
+	public void actionDown() {
+		pcs.firePropertyChange("action", null, "DOWN");
 	}
 
 	private class MyKeyListener implements KeyListener {
-		private AgentUserControlled a;
+		private ViewSnakeGame view;
 
-		public MyKeyListener(AgentUserControlled a) {
+		public MyKeyListener(ViewSnakeGame view) {
 			super();
-			this.a = a;
+			this.view = view;
 		}
 
 		@Override
 		public void keyPressed(KeyEvent e) {
 			final int keyCode = e.getKeyCode();
-			final int kl = a.keybindings().key_left();
-			final int kr = a.keybindings().key_right();
-			final int ku = a.keybindings().key_up();
-			final int kd = a.keybindings().key_down();
 
-			if (keyCode == kl) {
-				a.setAction(AgentAction.MOVE_LEFT);
-			} else if (keyCode == kr) {
-				a.setAction(AgentAction.MOVE_RIGHT);
-			} else if (keyCode == ku) {
-				a.setAction(AgentAction.MOVE_UP);
-			} else if (keyCode == kd) {
-				a.setAction(AgentAction.MOVE_DOWN);
+			if (keyCode == KeyEvent.VK_LEFT) {
+				view.actionLeft();
+			} else if (keyCode == KeyEvent.VK_RIGHT) {
+				view.actionRight();
+			} else if (keyCode == KeyEvent.VK_UP) {
+				view.actionUp();
+			} else if (keyCode == KeyEvent.VK_DOWN) {
+				view.actionDown();
 			}
 		}
 
@@ -87,4 +114,12 @@ public class ViewSnakeGame implements PropertyChangeListener {
 			// Handle key typed events here
 		}
 	}
+
+	@Override
+	public void windowStateChanged(WindowEvent e) {
+		if (e.getID() == WindowEvent.WINDOW_CLOSED) {
+			closed = true;
+		}
+	}
+
 }
