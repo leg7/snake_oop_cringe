@@ -31,7 +31,7 @@ public class Main {
 				serveurSocket = new ServerSocket(port);
 				System.out.println("Serveur mis en place.");
 
-				InputMap inputMap = new InputMap("./app/src/main/resources/layout/alone.lay");
+				InputMap inputMap = new InputMap("layouts/alone.lay");
 				SnakeGame snakeGameSolo = new SnakeGameSolo(1000, 1000, inputMap);
 
 				while (true) {   // le serveur va attendre qu'une connexion arrive
@@ -42,8 +42,6 @@ public class Main {
 					Thread thread = new Thread(controllerServer);
 					thread.start();
 				}
-			} catch (IOException e) {
-				System.err.println("problème\n"+e);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
