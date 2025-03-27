@@ -120,7 +120,7 @@ public class ViewSnakeGame implements PropertyChangeListener, WindowStateListene
 	@Override
 	public void windowStateChanged(WindowEvent e) {
 		if (e.getID() == WindowEvent.WINDOW_CLOSED) {
-			closed = true;
+			pcs.firePropertyChange("running", true, false);
 		}
 	}
 

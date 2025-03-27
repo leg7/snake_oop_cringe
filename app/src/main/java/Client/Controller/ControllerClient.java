@@ -24,6 +24,7 @@ public class ControllerClient implements PropertyChangeListener {
 	private Gson gson;
 	private Socket socket;
 	private PropertyChangeSupport pcs;
+	private Thread t;
 
 	public ControllerClient() {
 		gson = new Gson();
@@ -36,6 +37,7 @@ public class ControllerClient implements PropertyChangeListener {
 				im.getStart_snakes(), im.getStart_items());
 		viewSnakeGame = new ViewSnakeGame(this, p);
 		viewSnakeGame.addPropertyChangeListener(this);
+		t = null;
 	}
 
 	public void start(String serverIP, int port) throws IOException {
@@ -44,7 +46,7 @@ public class ControllerClient implements PropertyChangeListener {
 		DataInputStream soIn = new DataInputStream(socket.getInputStream());
 		PrintWriter soOut = new PrintWriter(socket.getOutputStream(), true);
 
-		Thread t = new Thread(new Runnable() {
+		t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -85,6 +87,11 @@ public class ControllerClient implements PropertyChangeListener {
 					if (socket != null && !socket.isClosed()) {
 						PrintWriter soOut = new PrintWriter(socket.getOutputStream(), true);
 						soOut.println((String) evt.getNewValue());
+					}
+					break;
+				case "running":
+					if ((boolean) evt.getOldValue() && !(boolean) evt.getNewValue() && t != null) {
+						t.interrupt();
 					}
 			}
 		} catch (IOException e) {
