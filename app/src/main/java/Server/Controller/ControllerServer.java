@@ -16,38 +16,35 @@ import java.beans.*;
 import com.google.gson.Gson;
 
 
-// Handle du serveur :
 // recoit les commandes, maj le game et renvoie l'état du jeu.
 public class ControllerServer implements Runnable, PropertyChangeListener {
 	SnakeGame game;
-    	private Socket socket;
-    	Vector<Socket> clients = new Vector<>();
-	HashMap<Socket, AgentUserControlled> clientToAgent = new HashMap<>();
+	Socket socket;
+	Vector<Socket> clients;
+	HashMap<Socket, AgentUserControlled> clientToAgent;
+	Gson gson;
 
 	public ControllerServer (SnakeGame game, Socket socket, Vector<Socket> clients) {
 		super();
 		this.game = game;
 		this.socket = socket;
 		this.clients = clients;
+		this.clientToAgent = new HashMap<>();
+		this.gson = new Gson();
 
 		ArrayList<Agent> agentsList = game.getAgents();
 		for (int i = 0; i < agentsList.size(); i++) {
 			if (agentsList.get(i) instanceof AgentUserControlled) {
 				AgentUserControlled a = (AgentUserControlled) agentsList.get(i);
 				if (!clientToAgent.containsValue(a)) {
-					clientToAgent.put(socket, a);
-					break;
+					clientToAgent.put(this.clients.get(i), a);
 				}
 			}
 		}
 
 		// S'inscrire comme listener du modèle SnakeGame
 		game.addPropertyChangeListener("update", this);
-	}
-
-	public ControllerServer (Socket socket) {
-		super();
-		this.socket = socket;
+		game.addPropertyChangeListener("gameOverForThisSnake", this);
 	}
 
 	public void run() {
@@ -55,9 +52,8 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 			connexionLog();
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String ch;  // la chaine recue
-			Gson gson = new Gson();
 
-			 while ((ch = in.readLine()) != null) {
+			 while ((ch = in.readLine()) != null && ! game.gameOver()) {
 				ch = gson.fromJson(ch, String.class);
 
 				clientMoveLog(socket, ch);
@@ -65,7 +61,7 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 			}
 
 			deconnexionLog();
-			clients.remove(socket);
+
 			clientToAgent.remove(socket);
 
 			socket.close();
@@ -75,7 +71,6 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 				game.removePropertyChangeListener(this);
 			}
 
-			System.out.println("server close");
 		} catch (IOException e) {
 			System.err.println("Erreur avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress() + "\t" + e);
 		}
@@ -101,28 +96,43 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {
+		Object obj = e.getNewValue();
 		switch (e.getPropertyName()) {
 			case "update":
-				System.out.println("update features : ");
-				var obj = e.getNewValue();
+//				System.out.println("update features : ");
 				if (obj instanceof Features(var fss, var fis)) {
 				 	Features features = (Features) obj;
 					sendGameState(features);
-				} else {
-					System.exit(69);
 				}
 			break;
+			case "gameOverForThisSnake":
+				if (obj instanceof AgentUserControlled) {
+					Agent a = (Agent) obj;
+					System.out.println("Game Over pour le client : " + a);
+					Socket client = findSocketWithAgent((AgentUserControlled) a);
+					if (client != null) {
+						clientToAgent.remove(client);
+						clients.remove(client);
+						try {
+							client.close();
+						} catch (IOException ex) {
+							throw new RuntimeException(ex);
+						}
+						sendGameOver(client);
+					}
+
+                }
+				break;
 
 			default:
-				System.exit(69);
+				System.err.println("Erreur propertyChange : " + e.getPropertyName());
 		}
 	}
 
 	private void sendGameState(Features features) {
 		try {
-			Gson gson = new Gson();
 			String json = gson.toJson(features);
-			System.out.println(json);
+//			System.out.println(json);
 
 			// Envoyer à tous les clients connectés
 			for (Socket client : clients) {
@@ -139,6 +149,18 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 		}
 	}
 
+	private void sendGameOver(Socket client) {
+		Boolean gameOver = true;
+		String json = gson.toJson(gameOver);
+		try {
+			DataOutputStream out = new DataOutputStream(client.getOutputStream());
+			out.writeUTF(json);
+			out.flush();
+		} catch (IOException ex) {
+			System.err.println("Erreur lors de l'envoi au client: " + ex.getMessage());
+		}
+	}
+
 	private void connexionLog() {
 		System.out.println("Connexion établie avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress());
 	}
@@ -149,6 +171,15 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 
 	private void clientMoveLog(Socket client, String direction) {
 		System.out.println("Client : " + clients.indexOf(socket) + " - Move : " + direction);
+	}
+
+	private Socket findSocketWithAgent(AgentUserControlled a) {
+		for (Socket client : clients) {
+			if (clientToAgent.get(client) == a) {
+				return client;
+			}
+		}
+		return null;
 	}
 
 }

@@ -78,8 +78,7 @@ public abstract class SnakeGame implements Runnable {
 	}
 
 	public void run() {
-		boolean continueGame = agents.size() != 0;
-		while (continueGame && turn < turnMax && isRunning) {
+		while (!gameOver() && isRunning) {
 			//pcs.firePropertyChange("turn", turn, ++turn);
 			++turn;
 			var agentsToRemove = new HashSet<Agent>();
@@ -187,10 +186,15 @@ public abstract class SnakeGame implements Runnable {
 				}
 			}
 
-			agentsToRemove.forEach(a -> agents.remove(a));
+			agentsToRemove.forEach(a -> {
+				if (a instanceof AgentUserControlled) {
+					pcs.firePropertyChange("gameOverForThisSnake", a, null);
+				}
+				agents.remove(a);
+			});
 
 			updateView();
-			System.out.println("Update view - tour : " + turn);
+//			System.out.println("Update view - tour : " + turn);
 
 			try {
 				Thread.sleep(sleepDelay);
@@ -239,4 +243,6 @@ public abstract class SnakeGame implements Runnable {
 	public void setAgentAction(Agent agent, AgentAction action) { agent.setAction(action); }
 
 	public void pause() { isRunning = false; }
+
+	public boolean gameOver() { return agents.isEmpty() && turn >= turnMax; }
 }

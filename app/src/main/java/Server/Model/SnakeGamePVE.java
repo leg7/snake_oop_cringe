@@ -25,7 +25,7 @@ public class SnakeGamePVE extends SnakeGame {
 					s1.getColorSnake(),
 					this);
 
-		var a2 = (AgentUserControlled)AgentFabric.snakeAISurvivalNaive(
+		var a2 = AgentFabric.snakeAISurvivalNaive(
 					new ArrayList<Position>(s2.getPositions()),
 					s2.getLastAction(),
 					s2.isInvincible() ? snakeInvincibleRounds : 0,

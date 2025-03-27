@@ -1,5 +1,6 @@
 import Client.Controller.*;
 import Server.Controller.*;
+import Server.Lobby.ConnectionHandle;
 import Server.Model.*;
 
 import java.net.*;
@@ -23,26 +24,19 @@ public class Main {
 		}
 
 		if (args[0].equals("server")) {
-			Vector<Socket> clients = new Vector<>();
 			ServerSocket serveurSocket;
+			ConnectionHandle connectionHandle;
 
 			try {
 				serveurSocket = new ServerSocket(port);
-				System.out.println("Serveur mis en place.");
+				System.out.println("Serveur mis en place sur le port " + port + ".");
 
-				InputMap inputMap = new InputMap("layouts/arenaNoWall.lay");
-				SnakeGame snakeGameSolo = new SnakeGamePVP(1000, 1000, inputMap);
+				connectionHandle = new ConnectionHandle(serveurSocket);
 
-				while (true) { // le serveur va attendre qu'une connexion arrive
-					Socket socket = serveurSocket.accept();
-					clients.add(socket);
-					snakeGameSolo.launch();
-					ControllerServer controllerServer = new ControllerServer(snakeGameSolo, socket,
-							clients);
+				Thread thread = new Thread(connectionHandle);
+				thread.start();
 
-					Thread thread = new Thread(controllerServer);
-					thread.start();
-				}
+				thread.join();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

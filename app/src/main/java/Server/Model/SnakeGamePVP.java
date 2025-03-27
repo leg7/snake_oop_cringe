@@ -17,7 +17,7 @@ public class SnakeGamePVP extends SnakeGame {
 
 		var s1 = snakes.get(0);
 		var s2 = snakes.get(1);
-		var a1 = (AgentUserControlled)AgentFabric.snakeUserControlledZQSD(
+		var a1 = (AgentUserControlled)AgentFabric.snakeUserControlledPad(
 					new ArrayList<Position>(s1.getPositions()),
 					s1.getLastAction(),
 					s1.isInvincible() ? snakeInvincibleRounds : 0,
