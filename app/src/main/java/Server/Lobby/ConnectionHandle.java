@@ -1,6 +1,8 @@
 package Server.Lobby;
 
 import Utils.LobbyInfo;
+import Utils.Message;
+
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -9,6 +11,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class ConnectionHandle implements Runnable {
     static int lobbyId = 0;
@@ -23,7 +27,7 @@ public class ConnectionHandle implements Runnable {
         try {
             BufferedReader in;
             String ch;  // la chaine recue
-            LobbyInfo lobbyInfo;
+            LobbyInfo lobbyInfo = null;
             Gson gson = new Gson();
 
             while (true) {
@@ -33,8 +37,16 @@ public class ConnectionHandle implements Runnable {
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
                 if ((ch = in.readLine()) != null) {
-                    lobbyInfo = gson.fromJson(ch, LobbyInfo.class);
-                    System.out.println(lobbyInfo);
+                    // Recoit les infos du lobby du client,
+                    // avec type MAP_INFO et data : LobbyInfo(mapPath, isAlone, isPVP).
+                    JsonObject jsonObject = gson.fromJson(ch, JsonObject.class);
+                    if (jsonObject.has("type") && jsonObject.has("data")) {
+                        if (jsonObject.get("type").getAsString().equals(Message.Type.MAP_INFO.toString())) {
+                            lobbyInfo = gson.fromJson(jsonObject.get("data"), LobbyInfo.class);
+                            System.out.println(lobbyInfo);
+                        }
+                    }
+
                     if (lobbyInfo != null) {
                         GameLobby lobby = findAvailableLobby(lobbyInfo.mapPath(), lobbyInfo.isAlone(), lobbyInfo.isPVP());
                         gameLobbies.put(lobbyId, lobby);
@@ -42,22 +54,26 @@ public class ConnectionHandle implements Runnable {
                         lobby.addClient(clientSocket);
 
                         if (lobby.isFull()) {
-//                            boolean gameStarted = true;
-//                            String json = gson.toJson(gameStarted);
+                            // Envoie le message du lancement de la partie au client,
+                            // avec type GAME_START et data : gameStarted(true).
+                            boolean gameStarted = true;
+                            String json = gson.toJson(gameStarted);
+                            String msg = Message.makeMessage(Message.Type.GAME_START, json);
+                            System.out.println(msg);
 
                             System.out.println("Lobby " + lobby.getId() + " starts ");
                             System.out.println("Client(s) in lobby : ");
 
                             for (Socket client : lobby.getClients()) {
                                 System.out.println("Client " + client);
-//                                DataOutputStream out = new DataOutputStream(client.getOutputStream());
-//                                out.writeUTF(json);
+                                DataOutputStream out = new DataOutputStream(client.getOutputStream());
+                                out.writeUTF(msg);
                             }
 
                             lobby.startGame();
                         }
                     } else {
-                        System.err.println("Erreur lobby info du client");
+                        System.err.println("Erreur lobby info du client : " + clientSocket.getInetAddress());
                     }
                 }
 

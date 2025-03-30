@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.beans.*;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 
 // recoit les commandes, maj le game et renvoie l'état du jeu.
@@ -53,8 +54,15 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String ch;  // la chaine recue
 
+			// Recoit les input key du client,
+			// avec type ACTION et data : String.
 			 while ((ch = in.readLine()) != null && ! game.gameOver()) {
-				ch = gson.fromJson(ch, String.class);
+				 JsonObject jsonObject = gson.fromJson(ch, JsonObject.class);
+				 if (jsonObject.has("type") && jsonObject.has("data")) {
+					 if (jsonObject.get("type").getAsString().equals(Message.Type.ACTION.toString())) {
+						 ch = gson.fromJson(jsonObject.get("data"), String.class);
+					 }
+				 }
 
 				clientMoveLog(socket, ch);
 				handleCommand(clientToAgent.get(socket), ch);
@@ -113,14 +121,13 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 					if (client != null) {
 						clientToAgent.remove(client);
 						clients.remove(client);
+						sendGameOver(client);
 						try {
 							client.close();
 						} catch (IOException ex) {
 							throw new RuntimeException(ex);
 						}
-						sendGameOver(client);
 					}
-
                 }
 				break;
 
@@ -131,14 +138,17 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 
 	private void sendGameState(Features features) {
 		try {
+			// Envoie le message d'actualisation de la partie du jeu au client,
+			// avec type GAME_STATE et data : features.
 			String json = gson.toJson(features);
-//			System.out.println(json);
+			String msg = Message.makeMessage(Message.Type.GAME_STATE, json);
+			System.out.println(msg);
 
 			// Envoyer à tous les clients connectés
 			for (Socket client : clients) {
 				try {
 					DataOutputStream out = new DataOutputStream(client.getOutputStream());
-					out.writeUTF(json);
+					out.writeUTF(msg);
 					out.flush();
 				} catch (IOException ex) {
 					System.err.println("Erreur lors de l'envoi au client: " + ex.getMessage());
@@ -152,9 +162,11 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 	private void sendGameOver(Socket client) {
 		Boolean gameOver = true;
 		String json = gson.toJson(gameOver);
+		String msg = Message.makeMessage(Message.Type.GAME_OVER, json);
+		System.out.println(msg + " - Client : " + clients.indexOf(client) + " - " + client.getInetAddress());
 		try {
 			DataOutputStream out = new DataOutputStream(client.getOutputStream());
-			out.writeUTF(json);
+			out.writeUTF(msg);
 			out.flush();
 		} catch (IOException ex) {
 			System.err.println("Erreur lors de l'envoi au client: " + ex.getMessage());
