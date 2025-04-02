@@ -1,41 +1,42 @@
 package Client.View;
 
-import Client.Controller.ControllerClient;
-import Client.View.PanelSnakeGame;
-import Server.Model.Agent.AgentUserControlled;
-import Utils.*;
-
-import java.awt.Graphics;
-import java.util.ArrayList;
-import java.beans.*;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import Client.Controller.ControllerClient;
+import Utils.AgentAction;
+import Utils.Features;
 
 public class ViewSnakeGame implements PropertyChangeListener, WindowStateListener {
-	private PanelSnakeGame p;
+	private JPanel panel;
 	private JFrame frame;
-	private boolean closed;
 	private PropertyChangeSupport pcs;
 
-	public boolean isClosed() {
-		return closed;
-	}
-
-	public ViewSnakeGame(ControllerClient controller, PanelSnakeGame p) {
+	public ViewSnakeGame(ControllerClient controller) {
 		super();
-		this.p = p;
-		pcs = new PropertyChangeSupport(this);
+		this.panel = new PanelSelection();
+		this.pcs = new PropertyChangeSupport(this);
+		this.frame = new JFrame("Snake game");
+
 		controller.addPropertyChangeListener(this);
-		frame = new JFrame("Snake game");
-		frame.add(p);
-		frame.setSize(500, 500);
+		panel.addPropertyChangeListener("snakeMapOptions", this);
+
+		frame.add(panel);
+		frame.setSize(500, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
 		frame.setVisible(true);
 		frame.addKeyListener(new MyKeyListener(this));
+
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener pcl) {
@@ -48,46 +49,53 @@ public class ViewSnakeGame implements PropertyChangeListener, WindowStateListene
 
 	public void propertyChange(PropertyChangeEvent e) {
 		switch (e.getPropertyName()) {
+			case "snakeMapOptions":
+				pcs.firePropertyChange("mapSelected", null, e.getNewValue());
+				break;
 			case "features":
 				var obj = e.getNewValue();
-				if (obj instanceof Features(var fss, var fis)) {
-					p.updateInfoGame(fss, fis);
-					p.repaint();
+				if (obj instanceof
+
+				Features(var fss, var fis) && panel instanceof PanelSnakeGame) {
+					PanelSnakeGame panel = (PanelSnakeGame) this.panel;
+					panel.updateInfoGame(fss, fis);
+					panel.repaint();
 				} else {
 					System.exit(69);
 				}
 				break;
 
 			case "turn":
-				p.repaint();
+				panel.repaint();
 				break;
 
 			default:
 				System.exit(69);
 		}
+
 	}
 
-	public void actionLeft() {
-		pcs.firePropertyChange("action", null, "LEFT");
+	public JPanel getPanel() {
+		return panel;
 	}
 
-	public void actionRight() {
-		pcs.firePropertyChange("action", null, "RIGHT");
+	public void setPanel(JPanel panel) {
+		this.frame.remove(this.panel);
+		this.frame.add(panel);
+		this.panel = panel;
+		this.frame.setVisible(true);
 	}
 
-	public void actionUp() {
-		pcs.firePropertyChange("action", null, "UP");
-	}
-
-	public void actionDown() {
-		pcs.firePropertyChange("action", null, "DOWN");
+	public void setPanel(JPanel panel, Dimension d) {
+		if (d != null)
+			this.frame.setSize(d);
+		setPanel(panel);
 	}
 
 	private class MyKeyListener implements KeyListener {
-		private ViewSnakeGame view;
+		ViewSnakeGame view;
 
 		public MyKeyListener(ViewSnakeGame view) {
-			super();
 			this.view = view;
 		}
 
@@ -95,15 +103,20 @@ public class ViewSnakeGame implements PropertyChangeListener, WindowStateListene
 		public void keyPressed(KeyEvent e) {
 			final int keyCode = e.getKeyCode();
 
+			System.out.println("Key pressed");
+			AgentAction action;
 			if (keyCode == KeyEvent.VK_LEFT) {
-				view.actionLeft();
+				action = AgentAction.MOVE_LEFT;
 			} else if (keyCode == KeyEvent.VK_RIGHT) {
-				view.actionRight();
+				action = AgentAction.MOVE_RIGHT;
 			} else if (keyCode == KeyEvent.VK_UP) {
-				view.actionUp();
+				action = AgentAction.MOVE_UP;
 			} else if (keyCode == KeyEvent.VK_DOWN) {
-				view.actionDown();
-			}
+				action = AgentAction.MOVE_DOWN;
+			} else
+				return;
+
+			view.pcs.firePropertyChange("action", null, action);
 		}
 
 		@Override

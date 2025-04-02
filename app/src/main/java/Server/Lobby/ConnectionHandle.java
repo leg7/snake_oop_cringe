@@ -3,7 +3,6 @@ package Server.Lobby;
 import Utils.LobbyInfo;
 import Utils.Message;
 
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -26,7 +25,7 @@ public class ConnectionHandle implements Runnable {
     public void run() {
         try {
             BufferedReader in;
-            String ch;  // la chaine recue
+            String ch; // la chaine recue
             LobbyInfo lobbyInfo = null;
             Gson gson = new Gson();
 
@@ -39,16 +38,15 @@ public class ConnectionHandle implements Runnable {
                 if ((ch = in.readLine()) != null) {
                     // Recoit les infos du lobby du client,
                     // avec type MAP_INFO et data : LobbyInfo(mapPath, isAlone, isPVP).
-                    JsonObject jsonObject = gson.fromJson(ch, JsonObject.class);
-                    if (jsonObject.has("type") && jsonObject.has("data")) {
-                        if (jsonObject.get("type").getAsString().equals(Message.Type.MAP_INFO.toString())) {
-                            lobbyInfo = gson.fromJson(jsonObject.get("data"), LobbyInfo.class);
-                            System.out.println(lobbyInfo);
-                        }
+                    Message message = gson.fromJson(ch, Message.class);
+                    if (message.getType().equals(Message.Type.MAP_INFO)) {
+                        lobbyInfo = gson.fromJson(message.getData(), LobbyInfo.class);
+                        System.out.println(lobbyInfo);
                     }
 
                     if (lobbyInfo != null) {
-                        GameLobby lobby = findAvailableLobby(lobbyInfo.mapPath(), lobbyInfo.isAlone(), lobbyInfo.isPVP());
+                        GameLobby lobby = findAvailableLobby(lobbyInfo.mapPath(), lobbyInfo.isAlone(),
+                                lobbyInfo.isPVP());
                         gameLobbies.put(lobbyId, lobby);
                         lobbyId++;
                         lobby.addClient(clientSocket);

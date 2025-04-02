@@ -42,10 +42,11 @@ public class Main {
 			}
 
 		} else if (args[0].equals("client")) {
-			ControllerClient c = new ControllerClient();
 			try {
-				c.start(ip, port);
+				ControllerClient controllerClient = new ControllerClient(ip, port);
+				controllerClient.listen();
 			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		} else {
 			badArg();

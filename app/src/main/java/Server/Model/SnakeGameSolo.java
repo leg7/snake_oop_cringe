@@ -16,18 +16,17 @@ public class SnakeGameSolo extends SnakeGame {
 
 		assert snakes.size() == 1;
 		var s1 = snakes.get(0);
-		var a1 = (AgentUserControlled)AgentFabric.snakeUserControlledZQSD(
-					new ArrayList<Position>(s1.getPositions()),
-					s1.getLastAction(),
-					s1.isInvincible() ? snakeInvincibleRounds : 0,
-					s1.isSick() ? snakeSickRounds : 0,
-					s1.getColorSnake(),
-					this);
+		var a1 = (AgentUserControlled) AgentFabric.snakeUserControlledPad(
+				new ArrayList<Position>(s1.getPositions()),
+				s1.getLastAction(),
+				s1.isInvincible() ? snakeInvincibleRounds : 0,
+				s1.isSick() ? snakeSickRounds : 0,
+				s1.getColorSnake(),
+				this);
 
 		agents.add(a1);
 
 		super.reinitialize();
 	}
-
 
 }

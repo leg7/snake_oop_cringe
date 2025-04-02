@@ -16,6 +16,7 @@ import java.beans.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import Client.View.PanelSelection.MapOptions;
 
 // recoit les commandes, maj le game et renvoie l'état du jeu.
 public class ControllerServer implements Runnable, PropertyChangeListener {
@@ -25,7 +26,7 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 	HashMap<Socket, AgentUserControlled> clientToAgent;
 	Gson gson;
 
-	public ControllerServer (SnakeGame game, Socket socket, Vector<Socket> clients) {
+	public ControllerServer(SnakeGame game, Socket socket, Vector<Socket> clients) {
 		super();
 		this.game = game;
 		this.socket = socket;
@@ -52,20 +53,21 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 		try {
 			connexionLog();
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			String ch;  // la chaine recue
+			String ch; // la chaine recue
 
 			// Recoit les input key du client,
-			// avec type ACTION et data : String.
-			 while ((ch = in.readLine()) != null && ! game.gameOver()) {
-				 JsonObject jsonObject = gson.fromJson(ch, JsonObject.class);
-				 if (jsonObject.has("type") && jsonObject.has("data")) {
-					 if (jsonObject.get("type").getAsString().equals(Message.Type.ACTION.toString())) {
-						 ch = gson.fromJson(jsonObject.get("data"), String.class);
-					 }
-				 }
-
-				clientMoveLog(socket, ch);
-				handleCommand(clientToAgent.get(socket), ch);
+			// avec type ACTION et data : AgentAction.
+			while ((ch = in.readLine()) != null && !game.gameOver()) {
+				Message message = gson.fromJson(ch, Message.class);
+				if (message.getType() == Message.Type.ACTION) {
+					AgentAction action = null;
+					action = gson.fromJson(message.getData(), AgentAction.class);
+					System.out.println(action);
+					clientMoveLog(socket, action.name());
+					handleCommand(clientToAgent.get(socket), action);
+				} else if (message.getType() == Message.Type.QUIT) {
+					// TODO: Remove agent and stop listening
+				}
 			}
 
 			deconnexionLog();
@@ -80,39 +82,26 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 			}
 
 		} catch (IOException e) {
-			System.err.println("Erreur avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress() + "\t" + e);
+			System.err.println("Erreur avec le client : " + clients.indexOf(socket) + " - "
+					+ socket.getInetAddress() + "\t" + e);
 		}
 	}
 
-	private void handleCommand(AgentUserControlled a, String ch) {
-		switch (ch) {
-			case "UP":
-				game.setAgentAction(a, AgentAction.MOVE_UP);
-				break;
-			case "DOWN":
-				game.setAgentAction(a, AgentAction.MOVE_DOWN);
-				break;
-			case "LEFT":
-				game.setAgentAction(a, AgentAction.MOVE_LEFT);
-				break;
-			case "RIGHT":
-				game.setAgentAction(a, AgentAction.MOVE_RIGHT);
-				break;
-			default:
-				break;
-		}
+	private void handleCommand(AgentUserControlled a, AgentAction action) {
+		if (action != null)
+			game.setAgentAction(a, action);
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {
 		Object obj = e.getNewValue();
 		switch (e.getPropertyName()) {
 			case "update":
-//				System.out.println("update features : ");
+				// System.out.println("update features : ");
 				if (obj instanceof Features(var fss, var fis)) {
-				 	Features features = (Features) obj;
+					Features features = (Features) obj;
 					sendGameState(features);
 				}
-			break;
+				break;
 			case "gameOverForThisSnake":
 				if (obj instanceof AgentUserControlled) {
 					Agent a = (Agent) obj;
@@ -128,7 +117,7 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 							throw new RuntimeException(ex);
 						}
 					}
-                }
+				}
 				break;
 
 			default:
@@ -174,11 +163,13 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 	}
 
 	private void connexionLog() {
-		System.out.println("Connexion établie avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress());
+		System.out.println("Connexion établie avec le client : " + clients.indexOf(socket) + " - "
+				+ socket.getInetAddress());
 	}
 
 	private void deconnexionLog() {
-		System.out.println("Connexion fermé avec le client : " + clients.indexOf(socket) + " - " + socket.getInetAddress());
+		System.out.println("Connexion fermé avec le client : " + clients.indexOf(socket) + " - "
+				+ socket.getInetAddress());
 	}
 
 	private void clientMoveLog(Socket client, String direction) {
