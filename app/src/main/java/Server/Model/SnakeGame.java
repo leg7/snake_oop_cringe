@@ -188,7 +188,7 @@ public abstract class SnakeGame implements Runnable {
 
 			agentsToRemove.forEach(a -> {
 				if (a instanceof AgentUserControlled) {
-					pcs.firePropertyChange("gameOverForThisSnake", a, null);
+					pcs.firePropertyChange("gameOverForThisSnake", null, a);
 				}
 				agents.remove(a);
 			});

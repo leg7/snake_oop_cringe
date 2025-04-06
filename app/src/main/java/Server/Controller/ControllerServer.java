@@ -67,6 +67,7 @@ public class ControllerServer implements Runnable, PropertyChangeListener {
 					handleCommand(clientToAgent.get(socket), action);
 				} else if (message.getType() == Message.Type.QUIT) {
 					// TODO: Remove agent and stop listening
+					break;
 				}
 			}
 
